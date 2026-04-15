@@ -1,6 +1,8 @@
 import { BentoCard } from "@/components/BentoCard";
 import { Badge } from "@/components/ui/badge";
 import { Microscope, Leaf, FlaskConical, Bug, Dna, Droplets } from "lucide-react";
+import researchAmrImg from "@/assets/research-amr.jpg";
+import researchEcoImg from "@/assets/research-ecology.jpg";
 
 const projects = [
   {
@@ -9,6 +11,7 @@ const projects = [
     status: "Ongoing",
     tags: ["Genomics", "AMR", "Clinical"],
     icon: Bug,
+    image: researchAmrImg,
   },
   {
     title: "Microbial Ecology Dynamics",
@@ -16,6 +19,7 @@ const projects = [
     status: "Ongoing",
     tags: ["Ecology", "Biofilms", "Extremophiles"],
     icon: Leaf,
+    image: researchEcoImg,
   },
   {
     title: "Pathogenesis of Multi-Drug Resistant Bacteria",
@@ -63,7 +67,10 @@ export default function Research() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((p, i) => (
-          <BentoCard key={p.title} delay={i * 0.08} className="flex flex-col gap-4">
+          <BentoCard key={p.title} delay={i * 0.08} className="flex flex-col gap-4 overflow-hidden">
+            {p.image && (
+              <img src={p.image} alt={p.title} className="w-full h-36 object-cover rounded-xl -mt-1" loading="lazy" width={800} height={544} />
+            )}
             <div className="flex items-start justify-between">
               <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center">
                 <p.icon className="h-5 w-5 text-primary" />

@@ -1,11 +1,15 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, FileText, Image, Search, Lock, FlaskConical } from "lucide-react";
+import { LogOut, FileText, Image, Search, Lock, Microscope, BookOpen, Building2 } from "lucide-react";
 import ContentEditor from "./ContentEditor";
 import SEOEditor from "./SEOEditor";
 import ImageManager from "./ImageManager";
 import ChangePassword from "./ChangePassword";
+import ResearchEditor from "./ResearchEditor";
+import PublicationsEditor from "./PublicationsEditor";
+import CollaborationsEditor from "./CollaborationsEditor";
+import { SktLogo } from "@/components/SktLogo";
 import { FloatingMicrobes } from "@/components/FloatingMicrobes";
 
 export default function AdminDashboard() {
@@ -18,8 +22,8 @@ export default function AdminDashboard() {
       <header className="border-b border-border/50 bg-card/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center gap-2">
-            <FlaskConical className="h-5 w-5 text-primary" />
-            <h1 className="font-heading font-bold text-lg">Research Dashboard</h1>
+            <SktLogo className="h-7 w-7" />
+            <h1 className="font-heading font-bold text-lg">Dashboard</h1>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground hidden sm:inline">{user?.email}</span>
@@ -31,34 +35,40 @@ export default function AdminDashboard() {
       </header>
 
       <div className="container py-6 relative z-10">
-        <Tabs defaultValue="content" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid bg-card/80 backdrop-blur">
-            <TabsTrigger value="content" className="gap-1">
-              <FileText className="h-4 w-4" /> Content
-            </TabsTrigger>
-            <TabsTrigger value="seo" className="gap-1">
-              <Search className="h-4 w-4" /> SEO
-            </TabsTrigger>
-            <TabsTrigger value="images" className="gap-1">
-              <Image className="h-4 w-4" /> Images
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-1">
-              <Lock className="h-4 w-4" /> Security
-            </TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue="research" className="space-y-6">
+          <div className="overflow-x-auto -mx-4 px-4">
+            <TabsList className="inline-flex w-auto bg-card/80 backdrop-blur">
+              <TabsTrigger value="research" className="gap-1">
+                <Microscope className="h-4 w-4" /> Research
+              </TabsTrigger>
+              <TabsTrigger value="publications" className="gap-1">
+                <BookOpen className="h-4 w-4" /> Publications
+              </TabsTrigger>
+              <TabsTrigger value="collaborations" className="gap-1">
+                <Building2 className="h-4 w-4" /> Collaborations
+              </TabsTrigger>
+              <TabsTrigger value="content" className="gap-1">
+                <FileText className="h-4 w-4" /> Content
+              </TabsTrigger>
+              <TabsTrigger value="seo" className="gap-1">
+                <Search className="h-4 w-4" /> SEO
+              </TabsTrigger>
+              <TabsTrigger value="images" className="gap-1">
+                <Image className="h-4 w-4" /> Images
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="gap-1">
+                <Lock className="h-4 w-4" /> Security
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-          <TabsContent value="content">
-            <ContentEditor />
-          </TabsContent>
-          <TabsContent value="seo">
-            <SEOEditor />
-          </TabsContent>
-          <TabsContent value="images">
-            <ImageManager />
-          </TabsContent>
-          <TabsContent value="settings">
-            <ChangePassword />
-          </TabsContent>
+          <TabsContent value="research"><ResearchEditor /></TabsContent>
+          <TabsContent value="publications"><PublicationsEditor /></TabsContent>
+          <TabsContent value="collaborations"><CollaborationsEditor /></TabsContent>
+          <TabsContent value="content"><ContentEditor /></TabsContent>
+          <TabsContent value="seo"><SEOEditor /></TabsContent>
+          <TabsContent value="images"><ImageManager /></TabsContent>
+          <TabsContent value="settings"><ChangePassword /></TabsContent>
         </Tabs>
       </div>
     </div>

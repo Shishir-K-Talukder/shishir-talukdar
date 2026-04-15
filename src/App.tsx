@@ -14,6 +14,8 @@ const Publications = lazy(() => import("./pages/Publications"));
 const Collaborations = lazy(() => import("./pages/Collaborations"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminPage = lazy(() => import("./pages/admin/AdminPage"));
 
@@ -33,6 +35,8 @@ const App = () => (
                 <Route path="/research" element={<Research />} />
                 <Route path="/publications" element={<Publications />} />
                 <Route path="/collaborations" element={<Collaborations />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
               </Route>

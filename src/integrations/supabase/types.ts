@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_placements: {
+        Row: {
+          ad_client: string
+          ad_slot: string
+          created_at: string
+          enabled: boolean
+          id: string
+          name: string
+          position: string
+          updated_at: string
+        }
+        Insert: {
+          ad_client?: string
+          ad_slot?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name: string
+          position?: string
+          updated_at?: string
+        }
+        Update: {
+          ad_client?: string
+          ad_slot?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name?: string
+          position?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string
+          id: string
+          published: boolean
+          published_at: string | null
+          slug: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       collaborations: {
         Row: {
           country: string

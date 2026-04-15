@@ -45,18 +45,7 @@ export function Navbar() {
         <div className="container flex h-full items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <span className="relative flex items-center justify-center h-8 w-8">
-              <span className="absolute inset-0 rounded-full bg-primary/15 blur-sm group-hover:bg-primary/25 transition-colors duration-500" />
-              <img
-                src="/favicon.png"
-                alt="SKT Logo"
-                className="relative h-8 w-8 rounded-full object-contain drop-shadow-[0_0_4px_hsl(var(--primary)/0.4)]"
-                loading="eager"
-                decoding="async"
-                width={32}
-                height={32}
-              />
-            </span>
+            <SktLogo className="h-8 w-8 shrink-0" />
             <span className="font-heading text-base font-bold tracking-tight text-foreground">
               Shishir K. Talukder
             </span>

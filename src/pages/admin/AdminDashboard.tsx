@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, FileText, Image, Search, Lock, Microscope, BookOpen, Building2 } from "lucide-react";
+import { LogOut, FileText, Image, Search, Lock, Microscope, BookOpen, Building2, PenSquare, Megaphone } from "lucide-react";
 import ContentEditor from "./ContentEditor";
 import SEOEditor from "./SEOEditor";
 import ImageManager from "./ImageManager";
@@ -9,6 +9,8 @@ import ChangePassword from "./ChangePassword";
 import ResearchEditor from "./ResearchEditor";
 import PublicationsEditor from "./PublicationsEditor";
 import CollaborationsEditor from "./CollaborationsEditor";
+import BlogEditor from "./BlogEditor";
+import AdsEditor from "./AdsEditor";
 import { SktLogo } from "@/components/SktLogo";
 import { FloatingMicrobes } from "@/components/FloatingMicrobes";
 
@@ -47,6 +49,9 @@ export default function AdminDashboard() {
               <TabsTrigger value="collaborations" className="gap-1">
                 <Building2 className="h-4 w-4" /> Collaborations
               </TabsTrigger>
+              <TabsTrigger value="blog" className="gap-1">
+                <PenSquare className="h-4 w-4" /> Blog
+              </TabsTrigger>
               <TabsTrigger value="content" className="gap-1">
                 <FileText className="h-4 w-4" /> Content
               </TabsTrigger>
@@ -55,6 +60,9 @@ export default function AdminDashboard() {
               </TabsTrigger>
               <TabsTrigger value="images" className="gap-1">
                 <Image className="h-4 w-4" /> Images
+              </TabsTrigger>
+              <TabsTrigger value="ads" className="gap-1">
+                <Megaphone className="h-4 w-4" /> Ads
               </TabsTrigger>
               <TabsTrigger value="settings" className="gap-1">
                 <Lock className="h-4 w-4" /> Security
@@ -65,9 +73,11 @@ export default function AdminDashboard() {
           <TabsContent value="research"><ResearchEditor /></TabsContent>
           <TabsContent value="publications"><PublicationsEditor /></TabsContent>
           <TabsContent value="collaborations"><CollaborationsEditor /></TabsContent>
+          <TabsContent value="blog"><BlogEditor /></TabsContent>
           <TabsContent value="content"><ContentEditor /></TabsContent>
           <TabsContent value="seo"><SEOEditor /></TabsContent>
           <TabsContent value="images"><ImageManager /></TabsContent>
+          <TabsContent value="ads"><AdsEditor /></TabsContent>
           <TabsContent value="settings"><ChangePassword /></TabsContent>
         </Tabs>
       </div>

@@ -11,6 +11,7 @@ const navLinks = [
   { to: "/research", label: "Research" },
   { to: "/publications", label: "Publications" },
   { to: "/collaborations", label: "Collaborations" },
+  { to: "/blog", label: "Blog" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];

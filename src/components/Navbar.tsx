@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu, X, FlaskConical } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -46,7 +46,7 @@ export function Navbar() {
           <Link to="/" className="flex items-center gap-2.5 group">
             <span className="relative flex items-center justify-center">
               <span className="absolute inset-0 rounded-full bg-primary/20 blur-md group-hover:bg-primary/30 transition-colors duration-500" />
-              <FlaskConical className="relative h-5 w-5 text-primary" />
+              <img src="/favicon.png" alt="SKT Logo" className="relative h-7 w-7 rounded-full" />
             </span>
             <span className="font-heading text-base font-bold tracking-tight text-foreground">
               Shishir K. Talukder

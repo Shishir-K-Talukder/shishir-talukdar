@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { FlaskConical, Eye, EyeOff } from "lucide-react";
+import { FlaskConical, Eye, EyeOff, Microscope } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { FloatingMicrobes } from "@/components/FloatingMicrobes";
 
 export default function AdminLogin() {
   const { signIn, resetPassword } = useAuth();
@@ -40,17 +41,24 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+      <FloatingMicrobes count={8} />
+
+      <Card className="w-full max-w-md relative z-10 border-border/50 bg-card/80 backdrop-blur-xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <FlaskConical className="h-10 w-10 text-primary" />
+            <div className="relative">
+              <div className="h-16 w-16 rounded-full border-2 border-primary/30 bg-primary/5 flex items-center justify-center">
+                <FlaskConical className="h-8 w-8 text-primary" />
+              </div>
+              <Microscope className="h-4 w-4 text-accent absolute -top-1 -right-1 opacity-60" />
+            </div>
           </div>
           <CardTitle className="text-2xl font-heading">
-            {forgotMode ? "Reset Password" : "Admin Panel"}
+            {forgotMode ? "Reset Password" : "Lab Access"}
           </CardTitle>
           <CardDescription>
-            {forgotMode ? "Enter your email to receive a reset link" : "Sign in to manage your portfolio"}
+            {forgotMode ? "Enter your email to receive a reset link" : "Authenticate to access the research dashboard"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -62,8 +70,9 @@ export default function AdminLogin() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
+                placeholder="researcher@lab.edu"
                 required
+                className="bg-secondary/50"
               />
             </div>
             {!forgotMode && (
@@ -76,6 +85,7 @@ export default function AdminLogin() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className="bg-secondary/50"
                   />
                   <button
                     type="button"
@@ -88,7 +98,7 @@ export default function AdminLogin() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Please wait..." : forgotMode ? "Send Reset Link" : "Sign In"}
+              {loading ? "Analyzing..." : forgotMode ? "Send Reset Link" : "Enter Lab"}
             </Button>
             <button
               type="button"

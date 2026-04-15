@@ -6,12 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Building2, Send } from "lucide-react";
+import { Mail, Building2, Send, MapPin, Clock } from "lucide-react";
 
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Valid email is required"),
   institution: z.string().min(2, "Institution is required"),
+  subject: z.string().min(2, "Subject is required"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
@@ -19,7 +20,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function Contact() {
   const { toast } = useToast();
-  const [form, setForm] = useState<FormData>({ name: "", email: "", institution: "", message: "" });
+  const [form, setForm] = useState<FormData>({ name: "", email: "", institution: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,7 +36,7 @@ export default function Contact() {
     }
     setErrors({});
     toast({ title: "Message sent!", description: "Thank you for reaching out. I'll get back to you soon." });
-    setForm({ name: "", email: "", institution: "", message: "" });
+    setForm({ name: "", email: "", institution: "", subject: "", message: "" });
   };
 
   const update = (field: keyof FormData, value: string) => {
@@ -66,10 +67,17 @@ export default function Contact() {
                 {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="institution">Institution / Organization</Label>
-              <Input id="institution" placeholder="University of Science" value={form.institution} onChange={(e) => update("institution", e.target.value)} />
-              {errors.institution && <p className="text-xs text-destructive">{errors.institution}</p>}
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="institution">Institution / Organization</Label>
+                <Input id="institution" placeholder="University of Science" value={form.institution} onChange={(e) => update("institution", e.target.value)} />
+                {errors.institution && <p className="text-xs text-destructive">{errors.institution}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Input id="subject" placeholder="Research collaboration on AMR" value={form.subject} onChange={(e) => update("subject", e.target.value)} />
+                {errors.subject && <p className="text-xs text-destructive">{errors.subject}</p>}
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="message">Message</Label>
@@ -87,13 +95,25 @@ export default function Contact() {
           <BentoCard delay={0.1}>
             <Mail className="h-6 w-6 text-primary mb-3" />
             <h3 className="font-bold font-heading mb-1">Email</h3>
-            <p className="text-sm text-muted-foreground">shishir.talukder@research.org</p>
+            <a href="mailto:shishir.talukder@research.org" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              shishir.talukder@research.org
+            </a>
           </BentoCard>
           <BentoCard delay={0.15}>
             <Building2 className="h-6 w-6 text-primary mb-3" />
             <h3 className="font-bold font-heading mb-1">Affiliation</h3>
             <p className="text-sm text-muted-foreground">Department of Microbiology</p>
             <p className="text-sm text-muted-foreground">Advanced Research Laboratory</p>
+          </BentoCard>
+          <BentoCard delay={0.2}>
+            <MapPin className="h-6 w-6 text-accent mb-3" />
+            <h3 className="font-bold font-heading mb-1">Location</h3>
+            <p className="text-sm text-muted-foreground">Dhaka, Bangladesh</p>
+          </BentoCard>
+          <BentoCard delay={0.25}>
+            <Clock className="h-6 w-6 text-muted-foreground mb-3" />
+            <h3 className="font-bold font-heading mb-1">Response Time</h3>
+            <p className="text-sm text-muted-foreground">Typically within 48 hours</p>
           </BentoCard>
         </div>
       </div>

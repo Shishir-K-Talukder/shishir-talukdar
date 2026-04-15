@@ -1,18 +1,60 @@
-import { FlaskConical } from "lucide-react";
+import { FlaskConical, Mail, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const socialLinks = [
+  { label: "Google Scholar", href: "https://scholar.google.com/" },
+  { label: "ResearchGate", href: "https://www.researchgate.net/" },
+  { label: "ORCID", href: "https://orcid.org/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/" },
+];
+
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="border-t py-10">
-      <div className="container flex flex-col items-center gap-4 text-center text-sm text-muted-foreground md:flex-row md:justify-between md:text-left">
-        <div className="flex items-center gap-2">
-          <FlaskConical className="h-4 w-4 text-primary" />
-          <span>© 2024 Shishir Kumar Talukder. All rights reserved.</span>
+      <div className="container">
+        <div className="grid gap-8 md:grid-cols-3 mb-8">
+          {/* Brand */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <FlaskConical className="h-4 w-4 text-primary" />
+              <span className="font-heading font-bold">Shishir K. Talukder</span>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Research Microbiologist specializing in antimicrobial resistance and microbial ecology.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-heading font-semibold text-sm mb-3">Quick Links</h4>
+            <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+              <Link to="/research" className="hover:text-primary transition-colors">Research</Link>
+              <Link to="/publications" className="hover:text-primary transition-colors">Publications</Link>
+              <Link to="/collaborations" className="hover:text-primary transition-colors">Collaborations</Link>
+              <Link to="/contact" className="hover:text-primary transition-colors">Contact</Link>
+            </div>
+          </div>
+
+          {/* Academic Profiles */}
+          <div>
+            <h4 className="font-heading font-semibold text-sm mb-3">Academic Profiles</h4>
+            <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+              {socialLinks.map((s) => (
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors inline-flex items-center gap-1">
+                  {s.label} <ExternalLink className="h-3 w-3" />
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="flex gap-4">
-          <Link to="/research" className="hover:text-primary transition-colors">Research</Link>
-          <Link to="/publications" className="hover:text-primary transition-colors">Publications</Link>
-          <Link to="/contact" className="hover:text-primary transition-colors">Contact</Link>
+
+        <div className="border-t pt-6 flex flex-col items-center gap-2 text-center text-xs text-muted-foreground md:flex-row md:justify-between md:text-left">
+          <span>© {currentYear} Shishir Kumar Talukder. All rights reserved.</span>
+          <a href="mailto:shishir.talukder@research.org" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
+            <Mail className="h-3 w-3" /> shishir.talukder@research.org
+          </a>
         </div>
       </div>
     </footer>

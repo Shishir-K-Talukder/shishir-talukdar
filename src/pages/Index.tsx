@@ -1,22 +1,48 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Users, FlaskConical, Microscope, Bug, Leaf } from "lucide-react";
+import { ArrowRight, BookOpen, Users, FlaskConical, Microscope, Bug, Leaf, GraduationCap, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BentoCard } from "@/components/BentoCard";
+import profileImg from "@/assets/profile-placeholder.jpg";
+import labHeroImg from "@/assets/lab-hero.jpg";
+import researchAmrImg from "@/assets/research-amr.jpg";
+import researchEcoImg from "@/assets/research-ecology.jpg";
 
 const stats = [
-  { value: "09+", label: "Research Projects" },
-  { value: "94.8%", label: "Success Rate" },
-  { value: "03+", label: "Global Partners" },
-  { value: "2+", label: "Years Research" },
+  { value: "09+", label: "Research Projects", icon: FlaskConical },
+  { value: "94.8%", label: "Success Rate", icon: Award },
+  { value: "03+", label: "Global Partners", icon: Users },
+  { value: "2+", label: "Years Research", icon: GraduationCap },
 ];
 
 export default function Index() {
   return (
     <div className="container py-12 md:py-20">
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Shishir Kumar Talukder",
+            jobTitle: "Research Microbiologist",
+            description: "Pioneering research and innovative solutions in microbial science for a healthier tomorrow.",
+            url: window.location.origin,
+            knowsAbout: ["Antimicrobial Resistance", "Bacterial Pathogenesis", "Microbial Ecology"],
+          }),
+        }}
+      />
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Hero — spans 2 cols */}
-        <BentoCard className="md:col-span-2 lg:col-span-2 lg:row-span-2 flex flex-col justify-between gap-6" delay={0}>
-          <div>
+        {/* Hero — spans 2 cols + 2 rows */}
+        <BentoCard className="md:col-span-2 lg:col-span-2 lg:row-span-2 flex flex-col justify-between gap-6 relative overflow-hidden" delay={0}>
+          {/* Background lab image */}
+          <div className="absolute inset-0 z-0">
+            <img src={labHeroImg} alt="" className="h-full w-full object-cover opacity-15" width={1280} height={720} />
+            <div className="absolute inset-0 bg-gradient-to-t from-card via-card/90 to-card/60" />
+          </div>
+
+          <div className="relative z-10">
             <p className="text-sm font-mono font-medium text-primary mb-3">Shishir Kumar Talukder</p>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-heading leading-tight mb-4">
               Advancing the Future of{" "}
@@ -27,18 +53,22 @@ export default function Index() {
             </p>
           </div>
 
-          {/* Profile placeholder */}
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-full bg-secondary flex items-center justify-center border border-border">
-              <FlaskConical className="h-7 w-7 text-primary" />
-            </div>
+          {/* Profile photo */}
+          <div className="relative z-10 flex items-center gap-4">
+            <img
+              src={profileImg}
+              alt="Shishir Kumar Talukder — Research Microbiologist"
+              className="h-16 w-16 rounded-full object-cover border-2 border-primary/40"
+              width={512}
+              height={512}
+            />
             <div>
               <p className="font-semibold">Research Microbiologist</p>
               <p className="text-sm text-muted-foreground">Antimicrobial Resistance Specialist</p>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="relative z-10 flex flex-wrap gap-3">
             <Button asChild>
               <Link to="/contact">Request Collaboration</Link>
             </Button>
@@ -50,7 +80,8 @@ export default function Index() {
 
         {/* Stats */}
         {stats.map((s, i) => (
-          <BentoCard key={s.label} className="text-center flex flex-col items-center justify-center gap-1" delay={0.1 + i * 0.05}>
+          <BentoCard key={s.label} className="text-center flex flex-col items-center justify-center gap-2" delay={0.1 + i * 0.05}>
+            <s.icon className="h-5 w-5 text-primary/60" />
             <span className="text-3xl md:text-4xl font-bold font-mono text-primary">{s.value}</span>
             <span className="text-sm text-muted-foreground">{s.label}</span>
           </BentoCard>
@@ -67,14 +98,15 @@ export default function Index() {
           </Link>
         </BentoCard>
 
-        {/* Featured Research 1 */}
-        <BentoCard delay={0.35}>
-          <div className="flex items-center gap-2 mb-3">
-            <Microscope className="h-5 w-5 text-primary" />
+        {/* Featured Research 1 — with image */}
+        <BentoCard delay={0.35} className="overflow-hidden">
+          <img src={researchAmrImg} alt="Antibiotic resistance research — petri dish analysis" className="w-full h-32 object-cover rounded-xl mb-3 -mt-1" loading="lazy" width={800} height={544} />
+          <div className="flex items-center gap-2 mb-2">
+            <Microscope className="h-4 w-4 text-primary" />
             <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Featured</span>
           </div>
           <h3 className="font-bold font-heading mb-2">Novel Antibiotic Resistance Mechanisms</h3>
-          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+          <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
             Investigating emerging patterns of antimicrobial resistance in clinical settings using advanced genomic approaches.
           </p>
           <Link to="/research" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
@@ -82,14 +114,15 @@ export default function Index() {
           </Link>
         </BentoCard>
 
-        {/* Featured Research 2 */}
-        <BentoCard delay={0.4}>
-          <div className="flex items-center gap-2 mb-3">
-            <Leaf className="h-5 w-5 text-accent" />
+        {/* Featured Research 2 — with image */}
+        <BentoCard delay={0.4} className="overflow-hidden">
+          <img src={researchEcoImg} alt="Microbial ecology dynamics — environmental samples" className="w-full h-32 object-cover rounded-xl mb-3 -mt-1" loading="lazy" width={800} height={544} />
+          <div className="flex items-center gap-2 mb-2">
+            <Leaf className="h-4 w-4 text-accent" />
             <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Featured</span>
           </div>
           <h3 className="font-bold font-heading mb-2">Microbial Ecology Dynamics</h3>
-          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+          <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
             Exploring the complex interactions within microbial communities in extreme environments.
           </p>
           <Link to="/research" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">

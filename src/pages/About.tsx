@@ -1,10 +1,17 @@
 import { BentoCard } from "@/components/BentoCard";
-import { FlaskConical, GraduationCap, Bug, Microscope, Leaf, Heart } from "lucide-react";
+import { GraduationCap, Bug, Microscope, Leaf, Heart, Globe, BookOpen } from "lucide-react";
+import profileImg from "@/assets/profile-placeholder.jpg";
+import labHeroImg from "@/assets/lab-hero.jpg";
 
 const timeline = [
   { year: "2022 – Present", title: "Research Microbiologist", desc: "Leading independent research on antimicrobial resistance and microbial ecology." },
   { year: "2020 – 2022", title: "Graduate Research Assistant", desc: "Advanced studies in bacterial pathogenesis and molecular microbiology." },
   { year: "2016 – 2020", title: "BSc Microbiology", desc: "Comprehensive training in general and applied microbiology." },
+];
+
+const skills = [
+  "PCR & qPCR", "Gel Electrophoresis", "Cell Culture", "Bioinformatics",
+  "Metagenomics", "Microscopy", "Antimicrobial Susceptibility Testing", "Statistical Analysis",
 ];
 
 export default function About() {
@@ -14,16 +21,20 @@ export default function About() {
         {/* Bio — spans 2 cols */}
         <BentoCard className="md:col-span-2 flex flex-col gap-6" delay={0}>
           <div className="flex items-center gap-4">
-            <div className="h-20 w-20 rounded-full bg-secondary flex items-center justify-center border border-border">
-              <FlaskConical className="h-9 w-9 text-primary" />
-            </div>
+            <img
+              src={profileImg}
+              alt="Shishir Kumar Talukder"
+              className="h-20 w-20 rounded-full object-cover border-2 border-primary/40"
+              width={512}
+              height={512}
+            />
             <div>
               <h1 className="text-2xl md:text-3xl font-bold font-heading">Shishir Kumar Talukder</h1>
               <p className="text-muted-foreground">Research Microbiologist</p>
             </div>
           </div>
           <p className="text-muted-foreground leading-relaxed">
-            I'm a research microbiologist dedicated to understanding and harnessing the power of microorganisms. With over a decade of experience in antimicrobial resistance and bacterial pathogenesis, I combine cutting-edge techniques with innovative approaches to address global health challenges. My work bridges fundamental research with practical applications, aiming to develop solutions that improve human health and environmental sustainability.
+            I'm a research microbiologist dedicated to understanding and harnessing the power of microorganisms. With experience in antimicrobial resistance and bacterial pathogenesis, I combine cutting-edge techniques with innovative approaches to address global health challenges. My work bridges fundamental research with practical applications, aiming to develop solutions that improve human health and environmental sustainability.
           </p>
         </BentoCard>
 
@@ -36,8 +47,29 @@ export default function About() {
           </p>
         </BentoCard>
 
+        {/* Lab image card */}
+        <BentoCard className="md:col-span-2 overflow-hidden p-0" delay={0.15}>
+          <img
+            src={labHeroImg}
+            alt="Microbiology research laboratory with petri dishes and microscopes"
+            className="w-full h-48 md:h-64 object-cover"
+            loading="lazy"
+            width={1280}
+            height={720}
+          />
+        </BentoCard>
+
+        {/* Mission */}
+        <BentoCard delay={0.2}>
+          <Globe className="h-6 w-6 text-accent mb-3" />
+          <h2 className="text-lg font-bold font-heading mb-2">Mission</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            To advance scientific understanding of microbial systems and translate discoveries into tangible solutions for global health and sustainability challenges.
+          </p>
+        </BentoCard>
+
         {/* Timeline — spans full width */}
-        <BentoCard className="md:col-span-2 lg:col-span-3" delay={0.2}>
+        <BentoCard className="md:col-span-2 lg:col-span-3" delay={0.25}>
           <div className="flex items-center gap-2 mb-6">
             <GraduationCap className="h-5 w-5 text-primary" />
             <h2 className="text-xl font-bold font-heading">Education & Experience</h2>
@@ -71,6 +103,21 @@ export default function About() {
             <p className="text-sm text-muted-foreground leading-relaxed">{e.desc}</p>
           </BentoCard>
         ))}
+
+        {/* Technical Skills */}
+        <BentoCard className="md:col-span-2 lg:col-span-3" delay={0.55}>
+          <div className="flex items-center gap-2 mb-4">
+            <BookOpen className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-bold font-heading">Technical Skills</h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {skills.map((s) => (
+              <span key={s} className="text-xs font-mono rounded-full border bg-secondary/50 px-3 py-1.5 text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors">
+                {s}
+              </span>
+            ))}
+          </div>
+        </BentoCard>
       </div>
     </div>
   );

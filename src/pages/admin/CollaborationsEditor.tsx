@@ -17,6 +17,7 @@ type Collaboration = {
   description: string;
   focus: string;
   sort_order: number;
+  image_url: string | null;
 };
 
 const empty: Omit<Collaboration, "id"> = {

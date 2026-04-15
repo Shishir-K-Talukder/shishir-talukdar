@@ -19,6 +19,7 @@ type Publication = {
   abstract: string;
   topics: string[];
   sort_order: number;
+  image_url: string | null;
 };
 
 const empty: Omit<Publication, "id"> = {

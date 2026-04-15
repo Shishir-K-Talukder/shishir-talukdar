@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu, X, FlaskConical } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";

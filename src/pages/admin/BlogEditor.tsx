@@ -9,9 +9,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Calendar as CalendarIcon } from "lucide-react";
 import { ImagePicker } from "@/components/ImagePicker";
+import { RichTextEditor } from "@/components/RichTextEditor";
 import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 type BlogPost = {
   id: string;
@@ -40,6 +45,7 @@ export default function BlogEditor() {
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [form, setForm] = useState(emptyPost);
   const [tagsInput, setTagsInput] = useState("");
+  const [scheduledDate, setScheduledDate] = useState<Date | undefined>();
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["admin-blog"],
@@ -52,10 +58,13 @@ export default function BlogEditor() {
 
   const save = useMutation({
     mutationFn: async (p: Omit<BlogPost, "id"> & { id?: string }) => {
-      const payload = {
-        ...p,
-        published_at: p.published && !p.published_at ? new Date().toISOString() : p.published_at,
-      };
+      const publishedAt = scheduledDate
+        ? scheduledDate.toISOString()
+        : p.published && !p.published_at
+        ? new Date().toISOString()
+        : p.published_at;
+
+      const payload = { ...p, published_at: publishedAt };
       if (p.id) {
         const { error } = await supabase.from("blog_posts").update(payload).eq("id", p.id);
         if (error) throw error;
@@ -78,13 +87,29 @@ export default function BlogEditor() {
     onError: (e: any) => toast.error(e.message),
   });
 
-  const openNew = () => { setEditing(null); setForm(emptyPost); setTagsInput(""); setOpen(true); };
-  const openEdit = (p: BlogPost) => { setEditing(p); setForm(p); setTagsInput(p.tags.join(", ")); setOpen(true); };
+  const openNew = () => {
+    setEditing(null);
+    setForm(emptyPost);
+    setTagsInput("");
+    setScheduledDate(undefined);
+    setOpen(true);
+  };
+
+  const openEdit = (p: BlogPost) => {
+    setEditing(p);
+    setForm(p);
+    setTagsInput(p.tags.join(", "));
+    setScheduledDate(p.published_at ? new Date(p.published_at) : undefined);
+    setOpen(true);
+  };
+
   const handleSave = () => {
     const tags = tagsInput.split(",").map(t => t.trim()).filter(Boolean);
     const slug = form.slug || slugify(form.title);
     save.mutate({ ...form, tags, slug, ...(editing ? { id: editing.id } : {}) });
   };
+
+  const wordCount = form.content.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length;
 
   return (
     <div className="space-y-4">
@@ -105,6 +130,9 @@ export default function BlogEditor() {
                     {p.published ? <Eye className="h-4 w-4 text-primary shrink-0" /> : <EyeOff className="h-4 w-4 text-muted-foreground shrink-0" />}
                     <CardTitle className="text-sm truncate">{p.title}</CardTitle>
                     {p.published && <Badge variant="secondary" className="text-xs shrink-0">Published</Badge>}
+                    {p.published_at && new Date(p.published_at) > new Date() && (
+                      <Badge variant="outline" className="text-xs shrink-0 border-primary/40 text-primary">Scheduled</Badge>
+                    )}
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <Button size="icon" variant="ghost" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
@@ -118,32 +146,62 @@ export default function BlogEditor() {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? "Edit Post" : "New Post"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div>
-              <Label>Title</Label>
-              <Input value={form.title} onChange={e => setForm({ ...form, title: e.target.value, slug: form.slug || slugify(e.target.value) })} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label>Title</Label>
+                <Input value={form.title} onChange={e => setForm({ ...form, title: e.target.value, slug: form.slug || slugify(e.target.value) })} />
+              </div>
+              <div>
+                <Label>Slug</Label>
+                <Input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="auto-generated-from-title" />
+              </div>
             </div>
-            <div>
-              <Label>Slug</Label>
-              <Input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="auto-generated-from-title" />
-            </div>
+
             <div>
               <Label>Excerpt</Label>
-              <Textarea value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })} rows={2} placeholder="Short summary…" />
+              <Textarea value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })} rows={2} placeholder="Short summary for blog listing…" />
             </div>
+
             <div>
-              <Label>Content</Label>
-              <Textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} rows={12} placeholder="Write your blog post… Use ## for headings, double newline for paragraphs." className="font-mono text-sm" />
+              <div className="flex items-center justify-between mb-1">
+                <Label>Content</Label>
+                <span className="text-xs text-muted-foreground">{wordCount} words</span>
+              </div>
+              <RichTextEditor
+                content={form.content}
+                onChange={val => setForm({ ...form, content: val })}
+                placeholder="Start writing your blog post..."
+              />
             </div>
+
             <ImagePicker value={form.cover_image_url} onChange={url => setForm({ ...form, cover_image_url: url })} label="Cover Image" />
-            <div>
-              <Label>Tags (comma-separated)</Label>
-              <Input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="microbiology, research, AMR" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label>Tags (comma-separated)</Label>
+                <Input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="microbiology, research, AMR" />
+              </div>
+              <div>
+                <Label>Schedule Publish Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !scheduledDate && "text-muted-foreground")}>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {scheduledDate ? format(scheduledDate, "PPP") : "Pick a date (optional)"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar mode="single" selected={scheduledDate} onSelect={setScheduledDate} initialFocus className="p-3 pointer-events-auto" />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
+
             <div className="flex items-center gap-3">
               <Switch checked={form.published} onCheckedChange={v => setForm({ ...form, published: v })} />
               <Label>Published</Label>

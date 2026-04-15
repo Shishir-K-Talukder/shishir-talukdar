@@ -73,15 +73,7 @@ export default function BlogPost() {
     );
   }
 
-  // Simple markdown-like rendering: split by double newlines for paragraphs
-  const renderContent = (content: string) => {
-    return content.split(/\n\n+/).map((block, i) => {
-      if (block.startsWith("## ")) return <h2 key={i} className="text-xl font-heading font-bold mt-8 mb-3">{block.replace("## ", "")}</h2>;
-      if (block.startsWith("### ")) return <h3 key={i} className="text-lg font-heading font-bold mt-6 mb-2">{block.replace("### ", "")}</h3>;
-      if (block.startsWith("# ")) return <h2 key={i} className="text-2xl font-heading font-bold mt-8 mb-4">{block.replace("# ", "")}</h2>;
-      return <p key={i} className="text-foreground/80 leading-relaxed mb-4">{block}</p>;
-    });
-  };
+  // Content is now HTML from TipTap editor
 
   return (
     <div className="container py-12 md:py-20">
@@ -117,9 +109,10 @@ export default function BlogPost() {
             </div>
           )}
 
-          <div className="prose-custom">
-            {renderContent(post.content)}
-          </div>
+          <div
+            className="prose prose-invert max-w-none prose-headings:font-heading prose-a:text-primary prose-img:rounded-xl"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
 
           {bottomAd && (
             <div className="mt-12">

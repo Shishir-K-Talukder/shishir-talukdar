@@ -38,10 +38,13 @@ export function useSiteMetadata(page?: string) {
   return useQuery({
     queryKey: ["site-metadata", page],
     queryFn: async () => {
-      let query = supabase.from("site_metadata").select("*");
-      if (page) query = query.eq("page", page).single();
-      const { data, error } = await query;
-      if (error && error.code !== "PGRST116") throw error;
+      if (page) {
+        const { data, error } = await supabase.from("site_metadata").select("*").eq("page", page).single();
+        if (error && error.code !== "PGRST116") throw error;
+        return data;
+      }
+      const { data, error } = await supabase.from("site_metadata").select("*");
+      if (error) throw error;
       return data;
     },
     staleTime: 1000 * 60 * 5,

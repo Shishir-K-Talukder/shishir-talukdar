@@ -14,6 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
+      collaborations: {
+        Row: {
+          country: string
+          created_at: string
+          description: string
+          focus: string
+          id: string
+          institution: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          country?: string
+          created_at?: string
+          description?: string
+          focus?: string
+          id?: string
+          institution: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          description?: string
+          focus?: string
+          id?: string
+          institution?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      publications: {
+        Row: {
+          abstract: string
+          created_at: string
+          doi: string | null
+          id: string
+          journal: string
+          sort_order: number
+          title: string
+          topics: string[]
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          abstract?: string
+          created_at?: string
+          doi?: string | null
+          id?: string
+          journal?: string
+          sort_order?: number
+          title: string
+          topics?: string[]
+          updated_at?: string
+          year?: number
+        }
+        Update: {
+          abstract?: string
+          created_at?: string
+          doi?: string | null
+          id?: string
+          journal?: string
+          sort_order?: number
+          title?: string
+          topics?: string[]
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      research_projects: {
+        Row: {
+          created_at: string
+          description: string
+          icon_name: string
+          id: string
+          image_url: string | null
+          sort_order: number
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: string
+          image_url?: string | null
+          sort_order?: number
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: string
+          image_url?: string | null
+          sort_order?: number
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_content: {
         Row: {
           created_at: string

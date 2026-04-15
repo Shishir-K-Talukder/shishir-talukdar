@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { ImagePicker } from "@/components/ImagePicker";
 import { toast } from "sonner";
 
 type Collaboration = {
@@ -16,10 +17,11 @@ type Collaboration = {
   description: string;
   focus: string;
   sort_order: number;
+  image_url: string | null;
 };
 
 const empty: Omit<Collaboration, "id"> = {
-  institution: "", country: "", description: "", focus: "", sort_order: 0,
+  institution: "", country: "", description: "", focus: "", sort_order: 0, image_url: null as string | null,
 };
 
 export default function CollaborationsEditor() {
@@ -70,7 +72,7 @@ export default function CollaborationsEditor() {
   function openNew() { setEditing(null); setForm(empty); setOpen(true); }
   function openEdit(c: Collaboration) {
     setEditing(c);
-    setForm({ institution: c.institution, country: c.country, description: c.description, focus: c.focus, sort_order: c.sort_order });
+    setForm({ institution: c.institution, country: c.country, description: c.description, focus: c.focus, sort_order: c.sort_order, image_url: (c as any).image_url || null });
     setOpen(true);
   }
   function close() { setOpen(false); setEditing(null); }
@@ -114,6 +116,7 @@ export default function CollaborationsEditor() {
             <Textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             <Input placeholder="Focus area" value={form.focus} onChange={(e) => setForm({ ...form, focus: e.target.value })} />
             <Input type="number" placeholder="Sort order" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
+            <ImagePicker value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} label="Collaboration Image" />
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={close}>Cancel</Button>

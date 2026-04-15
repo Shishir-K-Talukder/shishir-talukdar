@@ -21,6 +21,7 @@ export type Database = {
           description: string
           focus: string
           id: string
+          image_url: string | null
           institution: string
           sort_order: number
           updated_at: string
@@ -31,6 +32,7 @@ export type Database = {
           description?: string
           focus?: string
           id?: string
+          image_url?: string | null
           institution: string
           sort_order?: number
           updated_at?: string
@@ -41,6 +43,7 @@ export type Database = {
           description?: string
           focus?: string
           id?: string
+          image_url?: string | null
           institution?: string
           sort_order?: number
           updated_at?: string
@@ -53,6 +56,7 @@ export type Database = {
           created_at: string
           doi: string | null
           id: string
+          image_url: string | null
           journal: string
           sort_order: number
           title: string
@@ -65,6 +69,7 @@ export type Database = {
           created_at?: string
           doi?: string | null
           id?: string
+          image_url?: string | null
           journal?: string
           sort_order?: number
           title: string
@@ -77,6 +82,7 @@ export type Database = {
           created_at?: string
           doi?: string | null
           id?: string
+          image_url?: string | null
           journal?: string
           sort_order?: number
           title?: string

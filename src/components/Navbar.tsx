@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { SktLogo } from "@/components/SktLogo";
 
 const navLinks = [
   { to: "/", label: "Home" },

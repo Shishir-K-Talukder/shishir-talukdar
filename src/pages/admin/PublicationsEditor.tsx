@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { ImagePicker } from "@/components/ImagePicker";
 import { toast } from "sonner";
 
 type Publication = {
@@ -21,7 +22,7 @@ type Publication = {
 };
 
 const empty: Omit<Publication, "id"> = {
-  title: "", journal: "", year: new Date().getFullYear(), doi: null, abstract: "", topics: [], sort_order: 0,
+  title: "", journal: "", year: new Date().getFullYear(), doi: null, abstract: "", topics: [], sort_order: 0, image_url: null as string | null,
 };
 
 export default function PublicationsEditor() {
@@ -74,7 +75,7 @@ export default function PublicationsEditor() {
   function openNew() { setEditing(null); setForm(empty); setTopicsInput(""); setOpen(true); }
   function openEdit(p: Publication) {
     setEditing(p);
-    setForm({ title: p.title, journal: p.journal, year: p.year, doi: p.doi, abstract: p.abstract, topics: p.topics, sort_order: p.sort_order });
+    setForm({ title: p.title, journal: p.journal, year: p.year, doi: p.doi, abstract: p.abstract, topics: p.topics, sort_order: p.sort_order, image_url: (p as any).image_url || null });
     setTopicsInput(p.topics.join(", "));
     setOpen(true);
   }
@@ -121,6 +122,7 @@ export default function PublicationsEditor() {
             <Textarea placeholder="Abstract" value={form.abstract} onChange={(e) => setForm({ ...form, abstract: e.target.value })} />
             <Input placeholder="Topics (comma-separated)" value={topicsInput} onChange={(e) => setTopicsInput(e.target.value)} />
             <Input type="number" placeholder="Sort order" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
+            <ImagePicker value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} label="Publication Image" />
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={close}>Cancel</Button>

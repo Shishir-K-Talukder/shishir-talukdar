@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, FlaskConical } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
+import { ImagePicker } from "@/components/ImagePicker";
 import { toast } from "sonner";
 
 type Project = {
@@ -149,7 +150,7 @@ export default function ResearchEditor() {
             </Select>
             <Input placeholder="Tags (comma-separated)" value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} />
             <Input placeholder="Icon name (e.g. Bug, Leaf, Dna)" value={form.icon_name} onChange={(e) => setForm({ ...form, icon_name: e.target.value })} />
-            <Input placeholder="Image URL (optional)" value={form.image_url || ""} onChange={(e) => setForm({ ...form, image_url: e.target.value || null })} />
+            <ImagePicker value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} label="Project Image" />
             <Input type="number" placeholder="Sort order" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
           </div>
           <DialogFooter>

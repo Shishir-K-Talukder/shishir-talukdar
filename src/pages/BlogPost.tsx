@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import DOMPurify from "dompurify";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -144,7 +145,7 @@ export default function BlogPost() {
 
             <div
               className="prose prose-invert max-w-none prose-headings:font-heading prose-a:text-primary prose-img:rounded-xl prose-table:border-collapse prose-td:border prose-td:border-border prose-td:p-2 prose-th:border prose-th:border-border prose-th:p-2 prose-th:bg-muted/30"
-              dangerouslySetInnerHTML={{ __html: post.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content, { ADD_TAGS: ["iframe"], ADD_ATTR: ["allowfullscreen", "frameborder", "target"] }) }}
             />
 
             {bottomAd && (

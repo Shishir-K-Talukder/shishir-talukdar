@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { Mail, Server, Save, Loader2, Shield, Eye, EyeOff, Zap, Send, CheckCircle2, XCircle, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const PROVIDER_PRESETS = [
   { name: "Gmail", host: "smtp.gmail.com", port: 587, encryption: "tls", note: "Use App Password (not your regular password). Enable 2FA first → myaccount.google.com → Security → App Passwords.", icon: "📧" },

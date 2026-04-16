@@ -81,6 +81,7 @@ export function Navbar() {
     <>
       {/* ─── Desktop Top Navbar ─── */}
       <nav
+        aria-label="Main navigation"
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
           scrolled
@@ -253,6 +254,8 @@ export function Navbar() {
             <button
               onClick={() => setMoreMenuOpen(!moreMenuOpen)}
               className="relative flex items-center justify-center"
+              aria-label={moreMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={moreMenuOpen}
             >
               <div className={cn("p-2 rounded-full transition-colors", moreMenuOpen ? "text-primary" : "text-muted-foreground")}>
                 {moreMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

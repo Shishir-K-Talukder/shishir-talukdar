@@ -4,11 +4,14 @@ import { Link, useSearchParams } from "react-router-dom";
 import { BentoCard } from "@/components/BentoCard";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, Clock, ArrowRight, TrendingUp, Sparkles, Flame, Eye } from "lucide-react";
+import { Calendar, Clock, ArrowRight, TrendingUp, Sparkles, Flame, Eye, Bug, Leaf, Microscope, FlaskConical, Dna, Droplets, Beaker, Pill, Atom, HeartPulse, Syringe, TestTube } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import * as LucideIcons from "lucide-react";
+
+const categoryIconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
+  Bug, Leaf, Microscope, FlaskConical, Dna, Droplets, Sparkles, Eye, Flame, Beaker, Pill, Atom, HeartPulse, Syringe, TestTube,
+};
 import { AdSenseLoader } from "@/components/AdSenseLoader";
 
 declare global {
@@ -193,7 +196,7 @@ export default function Blog() {
             </button>
             {categories.map(cat => {
               const count = posts.filter(p => p.category_id === cat.id).length;
-              const CatIcon = (LucideIcons as any)[cat.icon_name] || Sparkles;
+              const CatIcon = categoryIconMap[cat.icon_name] || Sparkles;
               return (
                 <button
                   key={cat.id}

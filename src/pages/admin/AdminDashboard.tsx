@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   LogOut, FileText, Image, Search, Lock, Microscope, BookOpen,
-  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft,
+  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft, Tag,
 } from "lucide-react";
 import ContentEditor from "./ContentEditor";
 import SEOEditor from "./SEOEditor";
@@ -14,6 +14,7 @@ import CollaborationsEditor from "./CollaborationsEditor";
 import BlogEditor from "./BlogEditor";
 import AdsEditor from "./AdsEditor";
 import AnalyticsDashboard from "./AnalyticsDashboard";
+import CategoriesEditor from "./CategoriesEditor";
 import { SktLogo } from "@/components/SktLogo";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "blog", label: "Blog", icon: PenSquare },
+  { id: "categories", label: "Categories", icon: Tag },
   { id: "research", label: "Research", icon: Microscope },
   { id: "publications", label: "Publications", icon: BookOpen },
   { id: "collaborations", label: "Collaborations", icon: Building2 },
@@ -34,6 +36,7 @@ const navItems = [
 const panels: Record<string, React.FC> = {
   analytics: AnalyticsDashboard,
   blog: BlogEditor,
+  categories: CategoriesEditor,
   research: ResearchEditor,
   publications: PublicationsEditor,
   collaborations: CollaborationsEditor,

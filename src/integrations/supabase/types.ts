@@ -47,9 +47,46 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_categories: {
+        Row: {
+          color: string
+          created_at: string
+          description: string
+          icon_name: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           canonical_url: string
+          category_id: string | null
           content: string
           cover_image_url: string | null
           created_at: string
@@ -67,6 +104,7 @@ export type Database = {
         }
         Insert: {
           canonical_url?: string
+          category_id?: string | null
           content?: string
           cover_image_url?: string | null
           created_at?: string
@@ -84,6 +122,7 @@ export type Database = {
         }
         Update: {
           canonical_url?: string
+          category_id?: string | null
           content?: string
           cover_image_url?: string | null
           created_at?: string
@@ -99,7 +138,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "blog_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       collaborations: {
         Row: {

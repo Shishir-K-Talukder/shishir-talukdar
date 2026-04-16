@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Pencil, Trash2, Eye, EyeOff, Calendar as CalendarIcon, Sparkles, Loader2 } from "lucide-react";
 import { ImagePicker } from "@/components/ImagePicker";
 import { RichTextEditor } from "@/components/RichTextEditor";
@@ -34,12 +35,14 @@ type BlogPost = {
   meta_description: string;
   focus_keyword: string;
   canonical_url: string;
+  category_id: string | null;
 };
 
 const emptyPost: Omit<BlogPost, "id"> = {
   title: "", slug: "", content: "", excerpt: "",
   cover_image_url: null, tags: [], published: false, published_at: null,
   seo_title: "", meta_description: "", focus_keyword: "", canonical_url: "",
+  category_id: null,
 };
 
 function slugify(text: string) {
@@ -62,6 +65,15 @@ export default function BlogEditor() {
       const { data, error } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
       if (error) throw error;
       return data as BlogPost[];
+    },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("blog_categories").select("*").order("sort_order");
+      if (error) throw error;
+      return data as { id: string; name: string; color: string }[];
     },
   });
 
@@ -245,10 +257,28 @@ export default function BlogEditor() {
 
                   <ImagePicker value={form.cover_image_url} onChange={url => setForm({ ...form, cover_image_url: url })} label="Cover Image" />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <Label>Tags (comma-separated)</Label>
                       <Input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="microbiology, research, AMR" />
+                    </div>
+                    <div>
+                      <Label>Category</Label>
+                      <Select value={form.category_id || ""} onValueChange={v => setForm({ ...form, category_id: v || null })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map(c => (
+                            <SelectItem key={c.id} value={c.id}>
+                              <span className="flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color }} />
+                                {c.name}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label>Schedule Publish Date</Label>
@@ -256,7 +286,7 @@ export default function BlogEditor() {
                         <PopoverTrigger asChild>
                           <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !scheduledDate && "text-muted-foreground")}>
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {scheduledDate ? format(scheduledDate, "PPP") : "Pick a date (optional)"}
+                            {scheduledDate ? format(scheduledDate, "PPP") : "Pick a date"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">

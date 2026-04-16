@@ -16,4 +16,10 @@ User-agent: *
 Allow: /
 Disallow: /SKT-admin
 
+# Crawl-delay for polite bots
+Crawl-delay: 1
+
+# Host
+Host: https://shishir-talukdar.lovable.app
+
 Sitemap: https://shishir-talukdar.lovable.app/sitemap.xml

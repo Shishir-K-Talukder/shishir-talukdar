@@ -58,6 +58,7 @@ export default function BlogPost() {
 
   const sidebarAd = ads.find(a => a.position === "sidebar");
   const bottomAd = ads.find(a => a.position === "bottom");
+  const postTopAd = ads.find(a => a.position === "post_top");
 
   if (isLoading) {
     return (
@@ -87,6 +88,7 @@ export default function BlogPost() {
 
   return (
     <>
+      <AdSenseLoader />
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={metaDesc} />

@@ -68,6 +68,15 @@ export default function BlogEditor() {
     },
   });
 
+  const { data: categories = [] } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("blog_categories").select("*").order("sort_order");
+      if (error) throw error;
+      return data as { id: string; name: string; color: string }[];
+    },
+  });
+
   const save = useMutation({
     mutationFn: async (p: Omit<BlogPost, "id"> & { id?: string }) => {
       const publishedAt = scheduledDate

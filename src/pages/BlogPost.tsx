@@ -4,10 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { BentoCard } from "@/components/BentoCard";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
+import { useProfile } from "@/hooks/useProfile";
+import profileFallback from "@/assets/profile-placeholder.jpg";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -26,6 +28,8 @@ function AdUnit({ adClient, adSlot }: { adClient: string; adSlot: string }) {
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
+  const profile = useProfile();
+  const authorImg = profile.profileImage || profileFallback;
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["blog-post", slug],
@@ -105,7 +109,7 @@ export default function BlogPost() {
             image: post.cover_image_url || undefined,
             datePublished: post.published_at,
             url: pageUrl,
-            author: { "@type": "Person", name: "Shishir Kumar Talukder" },
+            author: { "@type": "Person", name: profile.name },
           })}
         </script>
       </Helmet>
@@ -124,17 +128,23 @@ export default function BlogPost() {
 
             <h1 className="text-2xl md:text-4xl font-heading font-bold mb-4">{post.title}</h1>
 
-            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
-              {post.published_at && (
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4" />
-                  {new Date(post.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                </span>
-              )}
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4" />
-                {Math.max(1, Math.ceil((post.content?.length || 0) / 1000))} min read
-              </span>
+            <div className="flex items-center gap-4 mb-6">
+              <img src={authorImg} alt={profile.name} className="h-10 w-10 rounded-full object-cover border border-primary/30" />
+              <div>
+                <p className="text-sm font-medium">{profile.name}</p>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  {post.published_at && (
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {new Date(post.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                    </span>
+                  )}
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {Math.max(1, Math.ceil((post.content?.length || 0) / 1000))} min read
+                  </span>
+                </div>
+              </div>
             </div>
 
             {post.tags?.length > 0 && (

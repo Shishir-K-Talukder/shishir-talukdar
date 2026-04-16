@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen, Users, FlaskConical, Microscope, Bug, Leaf, GraduationCap, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BentoCard } from "@/components/BentoCard";
-import profileImg from "@/assets/profile-placeholder.jpg";
+import { useProfile } from "@/hooks/useProfile";
+import profileFallback from "@/assets/profile-placeholder.jpg";
 import labHeroImg from "@/assets/lab-hero.jpg";
 import researchAmrImg from "@/assets/research-amr.jpg";
 import researchEcoImg from "@/assets/research-ecology.jpg";
@@ -15,6 +16,8 @@ const stats = [
 ];
 
 export default function Index() {
+  const profile = useProfile();
+  const profileImg = profile.profileImage || profileFallback;
   return (
     <div className="container py-12 md:py-20">
       {/* JSON-LD */}
@@ -24,8 +27,8 @@ export default function Index() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Person",
-            name: "Shishir Kumar Talukder",
-            jobTitle: "Research Microbiologist",
+            name: profile.name,
+            jobTitle: profile.title,
             description: "Pioneering research and innovative solutions in microbial science for a healthier tomorrow.",
             url: window.location.origin,
             knowsAbout: ["Antimicrobial Resistance", "Bacterial Pathogenesis", "Microbial Ecology"],
@@ -43,7 +46,7 @@ export default function Index() {
           </div>
 
           <div className="relative z-10">
-            <p className="text-sm font-mono font-medium text-primary mb-3">Shishir Kumar Talukder</p>
+            <p className="text-sm font-mono font-medium text-primary mb-3">{profile.name}</p>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-heading leading-tight mb-4">
               Advancing the Future of{" "}
               <span className="text-gradient">Microbial Science</span>
@@ -57,14 +60,14 @@ export default function Index() {
           <div className="relative z-10 flex items-center gap-4">
             <img
               src={profileImg}
-              alt="Shishir Kumar Talukder — Research Microbiologist"
+              alt={`${profile.name} — ${profile.title}`}
               className="h-16 w-16 rounded-full object-cover border-2 border-primary/40"
               width={512}
               height={512}
             />
             <div>
-              <p className="font-semibold">Research Microbiologist</p>
-              <p className="text-sm text-muted-foreground">Antimicrobial Resistance Specialist</p>
+              <p className="font-semibold">{profile.title}</p>
+              <p className="text-sm text-muted-foreground">{profile.subtitle}</p>
             </div>
           </div>
 
@@ -91,7 +94,7 @@ export default function Index() {
         <BentoCard className="md:col-span-2" delay={0.3}>
           <h2 className="text-xl font-bold font-heading mb-3">Welcome to My Lab</h2>
           <p className="text-muted-foreground leading-relaxed text-sm mb-4">
-            I'm Shishir Kumar Talukder, a research microbiologist dedicated to understanding and harnessing the power of microorganisms. With experience in antimicrobial resistance and bacterial pathogenesis, I combine cutting-edge techniques with innovative approaches to address global health challenges.
+            {profile.bio || `I'm ${profile.name}, a ${profile.title.toLowerCase()} dedicated to understanding and harnessing the power of microorganisms. With experience in antimicrobial resistance and bacterial pathogenesis, I combine cutting-edge techniques with innovative approaches to address global health challenges.`}
           </p>
           <Link to="/about" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
             Read more <ArrowRight className="h-3 w-3" />

@@ -1,8 +1,10 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /SKT-admin
 
 User-agent: Bingbot
 Allow: /
+Disallow: /SKT-admin
 
 User-agent: Twitterbot
 Allow: /
@@ -12,3 +14,6 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /SKT-admin
+
+Sitemap: https://shishir-talukdar.lovable.app/sitemap.xml

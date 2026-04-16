@@ -58,6 +58,11 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Close more menu on route change
+  useEffect(() => {
+    setMoreMenuOpen(false);
+  }, [pathname]);
+
   const handleDropdownEnter = () => {
     clearTimeout(dropdownTimeout.current);
     setBlogDropdown(true);

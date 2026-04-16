@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { Layout } from "./components/Layout";
 import { lazy, Suspense } from "react";
 import { PageSkeleton } from "./components/PageSkeleton";
+import { PageViewTracker } from "./components/PageViewTracker";
 
 const Index = lazy(() => import("./pages/Index"));
 const Research = lazy(() => import("./pages/Research"));
@@ -28,6 +29,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <PageViewTracker />
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
               <Route element={<Layout />}>

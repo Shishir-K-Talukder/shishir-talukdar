@@ -137,6 +137,53 @@ export type Database = {
         }
         Relationships: []
       }
+      page_views: {
+        Row: {
+          blog_post_id: string | null
+          browser: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          device_type: string | null
+          id: string
+          page_path: string
+          referrer: string | null
+          session_id: string | null
+        }
+        Insert: {
+          blog_post_id?: string | null
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          page_path: string
+          referrer?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          blog_post_id?: string | null
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          page_path?: string
+          referrer?: string | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_views_blog_post_id_fkey"
+            columns: ["blog_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       publications: {
         Row: {
           abstract: string

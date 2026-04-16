@@ -257,10 +257,28 @@ export default function BlogEditor() {
 
                   <ImagePicker value={form.cover_image_url} onChange={url => setForm({ ...form, cover_image_url: url })} label="Cover Image" />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <Label>Tags (comma-separated)</Label>
                       <Input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="microbiology, research, AMR" />
+                    </div>
+                    <div>
+                      <Label>Category</Label>
+                      <Select value={form.category_id || ""} onValueChange={v => setForm({ ...form, category_id: v || null })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map(c => (
+                            <SelectItem key={c.id} value={c.id}>
+                              <span className="flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color }} />
+                                {c.name}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label>Schedule Publish Date</Label>
@@ -268,7 +286,7 @@ export default function BlogEditor() {
                         <PopoverTrigger asChild>
                           <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !scheduledDate && "text-muted-foreground")}>
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {scheduledDate ? format(scheduledDate, "PPP") : "Pick a date (optional)"}
+                            {scheduledDate ? format(scheduledDate, "PPP") : "Pick a date"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">

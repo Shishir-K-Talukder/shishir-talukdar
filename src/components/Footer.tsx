@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { FlaskConical, Mail, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -8,11 +9,11 @@ const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/" },
 ];
 
-export function Footer() {
+export const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t py-10">
+    <footer ref={ref} className="border-t py-10">
       <div className="container">
         <div className="grid gap-8 md:grid-cols-3 mb-8">
           {/* Brand */}

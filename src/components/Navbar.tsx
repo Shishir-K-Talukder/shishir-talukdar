@@ -17,7 +17,6 @@ const navLinks = [
   { to: "/contact", label: "Contact", icon: Mail },
 ];
 
-// Bottom bar shows a subset of links for mobile
 const mobileBottomLinks = [
   { to: "/", label: "Home", icon: Home },
   { to: "/research", label: "Research", icon: FlaskConical },
@@ -85,7 +84,6 @@ export function Navbar() {
         )}
       >
         <div className="container flex h-full items-center justify-between">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0">
             <SktLogo className="h-8 w-8 shrink-0 transition-transform group-hover:scale-105" />
             <div className="flex flex-col leading-none">
@@ -98,7 +96,6 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop nav links */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((l) =>
               l.hasDropdown ? (
@@ -113,48 +110,32 @@ export function Navbar() {
                     to={l.to}
                     className={cn(
                       "relative px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1 rounded-md",
-                      isActive(l.to, true)
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
+                      isActive(l.to, true) ? "text-primary" : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     {isActive(l.to, true) && (
-                      <motion.span
-                        layoutId="nav-active"
-                        className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary"
-                        transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                      />
+                      <motion.span layoutId="nav-active" className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary" transition={{ type: "spring", bounce: 0.15, duration: 0.4 }} />
                     )}
                     {l.label}
                     <ChevronDown className={cn("h-3 w-3 transition-transform duration-200", blogDropdown && "rotate-180")} />
                   </Link>
-
                   <AnimatePresence>
                     {blogDropdown && categories.length > 0 && (
                       <motion.div
                         initial={{ opacity: 0, y: 8, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        transition={{ duration: 0.15 }}
                         className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 rounded-xl border border-border/60 bg-popover backdrop-blur-xl shadow-xl overflow-hidden"
                       >
                         <div className="p-1.5">
-                          <Link
-                            to="/blog"
-                            onClick={() => setBlogDropdown(false)}
-                            className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
-                          >
+                          <Link to="/blog" onClick={() => setBlogDropdown(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors">
                             <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
                             All Posts
                           </Link>
                           <div className="h-px bg-border/30 mx-2 my-1" />
                           {categories.map((cat) => (
-                            <Link
-                              key={cat.id}
-                              to={`/blog?category=${cat.id}`}
-                              onClick={() => setBlogDropdown(false)}
-                              className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
-                            >
+                            <Link key={cat.id} to={`/blog?category=${cat.id}`} onClick={() => setBlogDropdown(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
                               <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
                               <span className="truncate">{cat.name}</span>
                             </Link>
@@ -170,17 +151,11 @@ export function Navbar() {
                   to={l.to}
                   className={cn(
                     "relative px-3 py-2 text-sm font-medium transition-colors rounded-md",
-                    isActive(l.to)
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                    isActive(l.to) ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {isActive(l.to) && (
-                    <motion.span
-                      layoutId="nav-active"
-                      className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary"
-                      transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                    />
+                    <motion.span layoutId="nav-active" className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary" transition={{ type: "spring", bounce: 0.15, duration: 0.4 }} />
                   )}
                   {l.label}
                 </Link>
@@ -188,21 +163,17 @@ export function Navbar() {
             )}
           </div>
 
-          {/* CTA */}
           <div className="flex items-center gap-2">
-            <Link
-              to="/contact"
-              className="hidden lg:inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
+            <Link to="/contact" className="hidden lg:inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
               Collaborate
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* ─── Mobile Bottom Navigation Bar ─── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-        {/* More menu overlay */}
+      {/* ─── Mobile Floating Bottom Pill Nav ─── */}
+      <div className="fixed bottom-4 left-4 right-4 z-50 lg:hidden">
+        {/* More menu popup */}
         <AnimatePresence>
           {moreMenuOpen && (
             <>
@@ -210,15 +181,15 @@ export function Navbar() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-background/60 backdrop-blur-sm z-40"
+                className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40"
                 onClick={() => setMoreMenuOpen(false)}
               />
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="absolute bottom-full left-4 right-4 mb-2 z-50 rounded-2xl border border-border/60 bg-card/98 backdrop-blur-xl shadow-2xl p-2"
+                className="absolute bottom-full left-0 right-0 mb-3 z-50 rounded-2xl border border-border/40 bg-card/95 backdrop-blur-2xl shadow-[0_8px_40px_-8px_hsl(var(--primary)/0.2)] p-2"
               >
                 {navLinks
                   .filter((l) => !mobileBottomLinks.some((b) => b.to === l.to))
@@ -229,12 +200,10 @@ export function Navbar() {
                       onClick={() => setMoreMenuOpen(false)}
                       className={cn(
                         "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                        isActive(l.to)
-                          ? "text-primary bg-primary/10"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                        isActive(l.to) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                       )}
                     >
-                      <l.icon className="h-4.5 w-4.5" />
+                      <l.icon className="h-5 w-5" />
                       {l.label}
                     </Link>
                   ))}
@@ -243,8 +212,8 @@ export function Navbar() {
           )}
         </AnimatePresence>
 
-        {/* Bottom bar */}
-        <div className="bg-card/95 backdrop-blur-xl border-t border-border/40 px-2 pb-[env(safe-area-inset-bottom,6px)] pt-1.5">
+        {/* Floating pill bar */}
+        <div className="rounded-full bg-card/90 backdrop-blur-2xl border border-border/30 shadow-[0_4px_30px_-4px_hsl(var(--background)/0.8),0_0_0_1px_hsl(var(--border)/0.1)] px-2 py-2">
           <div className="flex items-center justify-around">
             {mobileBottomLinks.map((l) => {
               const active = isActive(l.to, l.to === "/blog");
@@ -253,19 +222,21 @@ export function Navbar() {
                 <Link
                   key={l.to}
                   to={l.to}
-                  className="relative flex flex-col items-center py-1 min-w-[56px]"
+                  className="relative flex items-center justify-center"
                 >
                   {active ? (
                     <motion.div
-                      layoutId="mobile-nav-active"
-                      className="flex items-center gap-1.5 bg-primary rounded-full px-3.5 py-1.5"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                      layoutId="mobile-pill-active"
+                      className="flex items-center gap-1.5 bg-primary rounded-full px-3.5 py-2"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.45 }}
                     >
                       <Icon className="h-4 w-4 text-primary-foreground" />
-                      <span className="text-xs font-semibold text-primary-foreground">{l.label}</span>
+                      <span className="text-xs font-semibold text-primary-foreground whitespace-nowrap">
+                        {l.label}
+                      </span>
                     </motion.div>
                   ) : (
-                    <div className="flex flex-col items-center gap-0.5 py-1">
+                    <div className="p-2 rounded-full">
                       <Icon className="h-5 w-5 text-muted-foreground" />
                     </div>
                   )}
@@ -273,20 +244,13 @@ export function Navbar() {
               );
             })}
 
-            {/* More button */}
+            {/* More */}
             <button
               onClick={() => setMoreMenuOpen(!moreMenuOpen)}
-              className="relative flex flex-col items-center py-1 min-w-[56px]"
+              className="relative flex items-center justify-center"
             >
-              <div className={cn(
-                "flex flex-col items-center gap-0.5 py-1 transition-colors",
-                moreMenuOpen ? "text-primary" : "text-muted-foreground"
-              )}>
-                {moreMenuOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
+              <div className={cn("p-2 rounded-full transition-colors", moreMenuOpen ? "text-primary" : "text-muted-foreground")}>
+                {moreMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </div>
             </button>
           </div>

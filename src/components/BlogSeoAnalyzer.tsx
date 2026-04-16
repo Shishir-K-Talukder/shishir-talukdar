@@ -1,8 +1,6 @@
 import { useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 
 interface SeoData {
   title: string;

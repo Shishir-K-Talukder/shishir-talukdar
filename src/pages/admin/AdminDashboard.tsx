@@ -1,7 +1,9 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, FileText, Image, Search, Lock, Microscope, BookOpen, Building2, PenSquare, Megaphone, BarChart3 } from "lucide-react";
+import {
+  LogOut, FileText, Image, Search, Lock, Microscope, BookOpen,
+  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft,
+} from "lucide-react";
 import ContentEditor from "./ContentEditor";
 import SEOEditor from "./SEOEditor";
 import ImageManager from "./ImageManager";
@@ -13,78 +15,119 @@ import BlogEditor from "./BlogEditor";
 import AdsEditor from "./AdsEditor";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import { SktLogo } from "@/components/SktLogo";
-import { FloatingMicrobes } from "@/components/FloatingMicrobes";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const tabs = [
-  { value: "analytics", label: "Analytics", icon: BarChart3 },
-  { value: "blog", label: "Blog", icon: PenSquare },
-  { value: "research", label: "Research", icon: Microscope },
-  { value: "publications", label: "Publications", icon: BookOpen },
-  { value: "collaborations", label: "Collaborations", icon: Building2 },
-  { value: "content", label: "Content", icon: FileText },
-  { value: "images", label: "Media", icon: Image },
-  { value: "ads", label: "Ads", icon: Megaphone },
-  { value: "seo", label: "SEO", icon: Search },
-  { value: "settings", label: "Security", icon: Lock },
+const navItems = [
+  { id: "analytics", label: "Analytics", icon: BarChart3 },
+  { id: "blog", label: "Blog", icon: PenSquare },
+  { id: "research", label: "Research", icon: Microscope },
+  { id: "publications", label: "Publications", icon: BookOpen },
+  { id: "collaborations", label: "Collaborations", icon: Building2 },
+  { id: "content", label: "Content", icon: FileText },
+  { id: "images", label: "Media", icon: Image },
+  { id: "ads", label: "Ads", icon: Megaphone },
+  { id: "seo", label: "SEO", icon: Search },
+  { id: "settings", label: "Security", icon: Lock },
 ];
+
+const panels: Record<string, React.FC> = {
+  analytics: AnalyticsDashboard,
+  blog: BlogEditor,
+  research: ResearchEditor,
+  publications: PublicationsEditor,
+  collaborations: CollaborationsEditor,
+  content: ContentEditor,
+  images: ImageManager,
+  ads: AdsEditor,
+  seo: SEOEditor,
+  settings: ChangePassword,
+};
 
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState("analytics");
+  const [active, setActive] = useState("analytics");
+  const [collapsed, setCollapsed] = useState(false);
+
+  const ActivePanel = panels[active] || AnalyticsDashboard;
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      <FloatingMicrobes count={3} className="opacity-30" />
-
-      <header className="border-b border-border/50 bg-card/80 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container flex h-14 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <SktLogo className="h-7 w-7" />
-            <h1 className="font-heading font-bold text-lg">Admin</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground hidden sm:inline">{user?.email}</span>
-            <Button variant="ghost" size="sm" onClick={signOut}>
-              <LogOut className="h-4 w-4 mr-1" /> Logout
-            </Button>
-          </div>
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-border/50 bg-card/95 backdrop-blur-xl transition-all duration-300",
+          collapsed ? "w-[60px]" : "w-[220px]"
+        )}
+      >
+        {/* Logo area */}
+        <div className={cn("flex items-center gap-2.5 px-4 h-14 border-b border-border/40 shrink-0", collapsed && "justify-center px-0")}>
+          <SktLogo className="h-7 w-7 shrink-0" />
+          {!collapsed && <span className="font-heading font-bold text-sm tracking-tight">Admin Panel</span>}
         </div>
-      </header>
 
-      <div className="container py-6 relative z-10">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          {/* Sidebar-style horizontal nav */}
-          <div className="overflow-x-auto -mx-4 px-4 pb-1">
-            <TabsList className="inline-flex w-auto h-auto gap-1 bg-card/60 backdrop-blur-md p-1.5 rounded-xl border border-border/40">
-              {tabs.map(t => (
-                <TabsTrigger
-                  key={t.value}
-                  value={t.value}
-                  className={cn(
-                    "gap-1.5 px-3 py-2 text-xs font-medium rounded-lg transition-all",
-                    "data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-sm"
-                  )}
-                >
-                  <t.icon className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">{t.label}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
+        {/* Nav items */}
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+          {navItems.map((item) => {
+            const isActive = active === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActive(item.id)}
+                className={cn(
+                  "w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                  "hover:bg-muted/60",
+                  isActive
+                    ? "bg-primary/10 text-primary shadow-sm border border-primary/20"
+                    : "text-muted-foreground hover:text-foreground border border-transparent",
+                  collapsed && "justify-center px-0 gap-0"
+                )}
+                title={collapsed ? item.label : undefined}
+              >
+                <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
+                {!collapsed && <span className="truncate">{item.label}</span>}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Bottom section */}
+        <div className={cn("border-t border-border/40 p-3 space-y-2 shrink-0", collapsed && "px-1.5")}>
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="w-full flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+            {!collapsed && <span>Collapse</span>}
+          </button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={signOut}
+            className={cn("w-full text-xs text-muted-foreground hover:text-destructive", collapsed && "px-0")}
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            {!collapsed && <span className="ml-1.5">Logout</span>}
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <div className={cn("flex-1 transition-all duration-300", collapsed ? "ml-[60px]" : "ml-[220px]")}>
+        {/* Top bar */}
+        <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-6 border-b border-border/40 bg-background/80 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            <h1 className="font-heading font-bold text-base capitalize">{navItems.find(n => n.id === active)?.label}</h1>
           </div>
+          <span className="text-xs text-muted-foreground hidden sm:block">{user?.email}</span>
+        </header>
 
-          <TabsContent value="analytics"><AnalyticsDashboard /></TabsContent>
-          <TabsContent value="blog"><BlogEditor /></TabsContent>
-          <TabsContent value="research"><ResearchEditor /></TabsContent>
-          <TabsContent value="publications"><PublicationsEditor /></TabsContent>
-          <TabsContent value="collaborations"><CollaborationsEditor /></TabsContent>
-          <TabsContent value="content"><ContentEditor /></TabsContent>
-          <TabsContent value="images"><ImageManager /></TabsContent>
-          <TabsContent value="ads"><AdsEditor /></TabsContent>
-          <TabsContent value="seo"><SEOEditor /></TabsContent>
-          <TabsContent value="settings"><ChangePassword /></TabsContent>
-        </Tabs>
+        {/* Panel content */}
+        <main className="p-6">
+          <ActivePanel />
+        </main>
       </div>
     </div>
   );

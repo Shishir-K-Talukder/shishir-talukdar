@@ -21,6 +21,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [blogDropdown, setBlogDropdown] = useState(false);
+  const [mobileBlogOpen, setMobileBlogOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownTimeout = useRef<ReturnType<typeof setTimeout>>();
   const { pathname } = useLocation();
@@ -120,33 +121,36 @@ export function Navbar() {
                   </Link>
 
                   <AnimatePresence>
-                    {blogDropdown && (
+                    {blogDropdown && categories.length > 0 && (
                       <motion.div
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 6 }}
-                        transition={{ duration: 0.12 }}
-                        className="absolute top-full left-0 mt-3 w-52 rounded-lg border border-border/60 bg-card/98 backdrop-blur-xl shadow-xl p-1.5"
+                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 rounded-xl border border-border/60 bg-popover backdrop-blur-xl shadow-xl overflow-hidden"
                       >
-                        <Link
-                          to="/blog"
-                          onClick={() => setBlogDropdown(false)}
-                          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
-                        >
-                          All Posts
-                        </Link>
-                        {categories.length > 0 && <div className="h-px bg-border/40 my-1" />}
-                        {categories.map((cat) => (
+                        <div className="p-1.5">
                           <Link
-                            key={cat.id}
-                            to={`/blog?category=${cat.id}`}
+                            to="/blog"
                             onClick={() => setBlogDropdown(false)}
-                            className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                            className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
                           >
-                            <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
-                            {cat.name}
+                            <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                            All Posts
                           </Link>
-                        ))}
+                          <div className="h-px bg-border/30 mx-2 my-1" />
+                          {categories.map((cat) => (
+                            <Link
+                              key={cat.id}
+                              to={`/blog?category=${cat.id}`}
+                              onClick={() => setBlogDropdown(false)}
+                              className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                            >
+                              <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
+                              <span className="truncate">{cat.name}</span>
+                            </Link>
+                          ))}
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -225,31 +229,65 @@ export function Navbar() {
                   transition={{ delay: i * 0.05, duration: 0.25 }}
                   className="w-full max-w-xs"
                 >
-                  <Link
-                    to={l.to}
-                    onClick={() => setOpen(false)}
-                    className={cn(
-                      "block rounded-lg px-6 py-3 text-center text-lg font-medium transition-colors",
-                      pathname === l.to || (l.hasDropdown && pathname.startsWith("/blog"))
-                        ? "text-primary bg-primary/10"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                    )}
-                  >
-                    {l.label}
-                  </Link>
-                  {l.hasDropdown && categories.length > 0 && (
-                    <div className="flex flex-wrap justify-center gap-2 mt-1.5 mb-2">
-                      {categories.map((cat) => (
-                        <Link
-                          key={cat.id}
-                          to={`/blog?category=${cat.id}`}
-                          onClick={() => setOpen(false)}
-                          className="text-xs text-muted-foreground hover:text-primary px-3 py-1 rounded-full border border-border/30 transition-colors"
-                        >
-                          {cat.name}
-                        </Link>
-                      ))}
+                  {l.hasDropdown ? (
+                    <div>
+                      <button
+                        onClick={() => setMobileBlogOpen(!mobileBlogOpen)}
+                        className={cn(
+                          "w-full flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-lg font-medium transition-colors",
+                          pathname.startsWith("/blog")
+                            ? "text-primary bg-primary/10"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                        )}
+                      >
+                        {l.label}
+                        <ChevronDown className={cn("h-4 w-4 transition-transform", mobileBlogOpen && "rotate-180")} />
+                      </button>
+                      <AnimatePresence>
+                        {mobileBlogOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="flex flex-col items-center gap-1 py-2">
+                              <Link
+                                to="/blog"
+                                onClick={() => setOpen(false)}
+                                className="text-sm text-muted-foreground hover:text-primary px-4 py-1.5 rounded-md transition-colors"
+                              >
+                                All Posts
+                              </Link>
+                              {categories.map((cat) => (
+                                <Link
+                                  key={cat.id}
+                                  to={`/blog?category=${cat.id}`}
+                                  onClick={() => setOpen(false)}
+                                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary px-4 py-1.5 rounded-md transition-colors"
+                                >
+                                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: cat.color }} />
+                                  {cat.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
+                  ) : (
+                    <Link
+                      to={l.to}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "block rounded-lg px-6 py-3 text-center text-lg font-medium transition-colors",
+                        pathname === l.to
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                      )}
+                    >
+                      {l.label}
+                    </Link>
                   )}
                 </motion.div>
               ))}

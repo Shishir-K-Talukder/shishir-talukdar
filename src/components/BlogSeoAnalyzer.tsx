@@ -87,7 +87,9 @@ export function BlogSeoAnalyzer({ data }: { data: SeoData }) {
         <h3 className="text-sm font-heading font-bold">SEO Score</h3>
         <span className={cn("text-2xl font-bold font-mono", scoreColor)}>{score}%</span>
       </div>
-      <Progress value={score} className="h-2" indicatorClassName={progressColor} />
+      <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+        <div className={cn("h-full rounded-full transition-all", progressColor)} style={{ width: `${score}%` }} />
+      </div>
 
       <div className="space-y-1.5 max-h-[400px] overflow-y-auto pr-1">
         {checks.map((c, i) => (

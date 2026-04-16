@@ -32,7 +32,7 @@ const tabs = [
 
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState("blog");
+  const [activeTab, setActiveTab] = useState("analytics");
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">

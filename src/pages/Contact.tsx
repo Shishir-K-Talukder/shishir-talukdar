@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, Building2, Send, MapPin, Clock, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+import { rateLimit, sanitizeInput } from "@/lib/security";
 
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -39,10 +40,23 @@ export default function Contact() {
       return;
     }
     setErrors({});
+
+    if (!rateLimit("contact-form", 3, 120_000)) {
+      toast({ title: "Too many attempts", description: "Please wait a couple of minutes before trying again.", variant: "destructive" });
+      return;
+    }
+
     setSending(true);
 
     try {
-      const { error } = await supabase.functions.invoke("send-contact", { body: form });
+      const sanitizedForm = {
+        name: sanitizeInput(form.name),
+        email: form.email,
+        institution: sanitizeInput(form.institution),
+        subject: sanitizeInput(form.subject),
+        message: sanitizeInput(form.message),
+      };
+      const { error } = await supabase.functions.invoke("send-contact", { body: sanitizedForm });
       if (error) throw error;
       setSent(true);
     } catch (err: any) {

@@ -1,6 +1,7 @@
 import { BentoCard } from "@/components/BentoCard";
 import { GraduationCap, Bug, Microscope, Leaf, Heart, Globe, BookOpen } from "lucide-react";
-import profileImg from "@/assets/profile-placeholder.jpg";
+import { useProfile } from "@/hooks/useProfile";
+import profileFallback from "@/assets/profile-placeholder.jpg";
 import labHeroImg from "@/assets/lab-hero.jpg";
 
 const timeline = [
@@ -15,6 +16,8 @@ const skills = [
 ];
 
 export default function About() {
+  const profile = useProfile();
+  const profileImg = profile.profileImage || profileFallback;
   return (
     <div className="container py-12 md:py-20">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -23,18 +26,18 @@ export default function About() {
           <div className="flex items-center gap-4">
             <img
               src={profileImg}
-              alt="Shishir Kumar Talukder"
+              alt={profile.name}
               className="h-20 w-20 rounded-full object-cover border-2 border-primary/40"
               width={512}
               height={512}
             />
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold font-heading">Shishir Kumar Talukder</h1>
-              <p className="text-muted-foreground">Research Microbiologist</p>
+              <h1 className="text-2xl md:text-3xl font-bold font-heading">{profile.name}</h1>
+              <p className="text-muted-foreground">{profile.title}</p>
             </div>
           </div>
           <p className="text-muted-foreground leading-relaxed">
-            I'm a research microbiologist dedicated to understanding and harnessing the power of microorganisms. With experience in antimicrobial resistance and bacterial pathogenesis, I combine cutting-edge techniques with innovative approaches to address global health challenges. My work bridges fundamental research with practical applications, aiming to develop solutions that improve human health and environmental sustainability.
+            {profile.bio || "I'm a research microbiologist dedicated to understanding and harnessing the power of microorganisms. With experience in antimicrobial resistance and bacterial pathogenesis, I combine cutting-edge techniques with innovative approaches to address global health challenges. My work bridges fundamental research with practical applications, aiming to develop solutions that improve human health and environmental sustainability."}
           </p>
         </BentoCard>
 

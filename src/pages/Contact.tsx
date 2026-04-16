@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Building2, Send, MapPin, Clock } from "lucide-react";
+import { Mail, Building2, Send, MapPin, Clock, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -22,8 +23,9 @@ export default function Contact() {
   const { toast } = useToast();
   const [form, setForm] = useState<FormData>({ name: "", email: "", institution: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = schema.safeParse(form);
     if (!result.success) {
@@ -35,8 +37,18 @@ export default function Contact() {
       return;
     }
     setErrors({});
-    toast({ title: "Message sent!", description: "Thank you for reaching out. I'll get back to you soon." });
-    setForm({ name: "", email: "", institution: "", subject: "", message: "" });
+    setSending(true);
+
+    try {
+      const { error } = await supabase.functions.invoke("send-contact", { body: form });
+      if (error) throw error;
+      toast({ title: "Message sent!", description: "Thank you for reaching out. I'll get back to you soon." });
+      setForm({ name: "", email: "", institution: "", subject: "", message: "" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to send message. Please try again.", variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
   };
 
   const update = (field: keyof FormData, value: string) => {
@@ -52,7 +64,6 @@ export default function Contact() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        {/* Form — spans 2 cols */}
         <BentoCard className="md:col-span-2" delay={0}>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid gap-5 md:grid-cols-2">
@@ -84,13 +95,13 @@ export default function Contact() {
               <Textarea id="message" placeholder="Describe your research interests and how you'd like to collaborate..." rows={5} value={form.message} onChange={(e) => update("message", e.target.value)} />
               {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
             </div>
-            <Button type="submit" className="w-full md:w-auto">
-              <Send className="mr-2 h-4 w-4" /> Send Message
+            <Button type="submit" className="w-full md:w-auto" disabled={sending}>
+              {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+              {sending ? "Sending..." : "Send Message"}
             </Button>
           </form>
         </BentoCard>
 
-        {/* Contact info */}
         <div className="flex flex-col gap-4">
           <BentoCard delay={0.1}>
             <Mail className="h-6 w-6 text-primary mb-3" />

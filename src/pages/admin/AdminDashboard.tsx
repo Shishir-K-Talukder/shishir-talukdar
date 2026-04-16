@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   LogOut, Image, Search, Lock, Microscope, BookOpen,
-  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft, Tag, Shield,
+  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft, Tag, Shield, Mail,
 } from "lucide-react";
 import SEOEditor from "./SEOEditor";
 import ImageManager from "./ImageManager";
@@ -15,6 +15,7 @@ import AdsEditor from "./AdsEditor";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import CategoriesEditor from "./CategoriesEditor";
 import RoleManager from "./RoleManager";
+import SmtpSettings from "./SmtpSettings";
 import { SktLogo } from "@/components/SktLogo";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ const navItems = [
   { id: "images", label: "Media", icon: Image },
   { id: "ads", label: "Ads", icon: Megaphone },
   { id: "seo", label: "SEO", icon: Search },
+  { id: "smtp", label: "Email / SMTP", icon: Mail },
   { id: "roles", label: "Roles", icon: Shield },
   { id: "settings", label: "Security", icon: Lock },
 ];
@@ -43,6 +45,7 @@ const panels: Record<string, React.FC> = {
   images: ImageManager,
   ads: AdsEditor,
   seo: SEOEditor,
+  smtp: SmtpSettings,
   roles: RoleManager,
   settings: ChangePassword,
 };

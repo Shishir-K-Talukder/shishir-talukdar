@@ -26,3 +26,4 @@ export const BentoCard = forwardRef<HTMLDivElement, BentoCardProps>(
 );
 
 BentoCard.displayName = "BentoCard";
+

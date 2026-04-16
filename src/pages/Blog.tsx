@@ -4,11 +4,14 @@ import { Link, useSearchParams } from "react-router-dom";
 import { BentoCard } from "@/components/BentoCard";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, Clock, ArrowRight, TrendingUp, Sparkles, Flame, Eye } from "lucide-react";
+import { Calendar, Clock, ArrowRight, TrendingUp, Sparkles, Flame, Eye, Bug, Leaf, Microscope, FlaskConical, Dna, Droplets, Beaker, Pill, Atom, HeartPulse, Syringe, TestTube } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { icons } from "lucide-react";
+
+const categoryIconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
+  Bug, Leaf, Microscope, FlaskConical, Dna, Droplets, Sparkles, Eye, Flame, Beaker, Pill, Atom, HeartPulse, Syringe, TestTube,
+};
 import { AdSenseLoader } from "@/components/AdSenseLoader";
 
 declare global {
@@ -66,7 +69,7 @@ export default function Blog() {
 
   const filteredPosts = activeCategory === "all"
     ? posts
-    : posts.filter(p => (p as any).category_id === activeCategory);
+    : posts.filter(p => p.category_id === activeCategory);
 
   const sidebarAd = ads.find(a => a.position === "sidebar");
   const bottomAd = ads.find(a => a.position === "bottom");
@@ -192,8 +195,8 @@ export default function Blog() {
               <span className="text-xs text-muted-foreground">{posts.length}</span>
             </button>
             {categories.map(cat => {
-              const count = posts.filter(p => (p as any).category_id === cat.id).length;
-              const CatIcon = icons[cat.icon_name as keyof typeof icons] || Sparkles;
+              const count = posts.filter(p => p.category_id === cat.id).length;
+              const CatIcon = categoryIconMap[cat.icon_name] || Sparkles;
               return (
                 <button
                   key={cat.id}
@@ -232,7 +235,7 @@ export default function Blog() {
               </BentoCard>
             ) : (
               filteredPosts.map((post, i) => {
-                const postCategory = categories.find(c => c.id === (post as any).category_id);
+                const postCategory = categories.find(c => c.id === post.category_id);
                 return (
                   <motion.div
                     key={post.id}

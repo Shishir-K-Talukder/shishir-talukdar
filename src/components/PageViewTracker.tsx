@@ -25,9 +25,6 @@ export function PageViewTracker() {
     const session_id = getSessionId();
     const referrer = document.referrer || "";
 
-    // Check if this is a blog post
-    const blogMatch = path.match(/^\/blog\/(.+)$/);
-
     const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-pageview`;
 
     fetch(url, {

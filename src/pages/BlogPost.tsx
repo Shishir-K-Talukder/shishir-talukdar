@@ -81,9 +81,9 @@ export default function BlogPost() {
     );
   }
 
-  const seoTitle = (post as any).seo_title || post.title;
-  const metaDesc = (post as any).meta_description || post.excerpt;
-  const canonicalUrl = (post as any).canonical_url || "";
+  const seoTitle = post.seo_title || post.title;
+  const metaDesc = post.meta_description || post.excerpt;
+  const canonicalUrl = post.canonical_url || "";
   const pageUrl = `${window.location.origin}/blog/${post.slug}`;
 
   return (
@@ -92,7 +92,7 @@ export default function BlogPost() {
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={metaDesc} />
-        {(post as any).focus_keyword && <meta name="keywords" content={(post as any).focus_keyword} />}
+        {post.focus_keyword && <meta name="keywords" content={post.focus_keyword} />}
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={metaDesc} />
         <meta property="og:type" content="article" />

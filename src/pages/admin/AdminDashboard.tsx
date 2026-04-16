@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   LogOut, Image, Search, Lock, Microscope, BookOpen,
-  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft, Tag, Shield, Mail,
+  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft, Tag, Shield, Mail, UserCircle,
 } from "lucide-react";
 import SEOEditor from "./SEOEditor";
 import ImageManager from "./ImageManager";
@@ -16,11 +16,13 @@ import AnalyticsDashboard from "./AnalyticsDashboard";
 import CategoriesEditor from "./CategoriesEditor";
 import RoleManager from "./RoleManager";
 import SmtpSettings from "./SmtpSettings";
+import ProfileEditor from "./ProfileEditor";
 import { SktLogo } from "@/components/SktLogo";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
+  { id: "profile", label: "Profile", icon: UserCircle },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "blog", label: "Blog", icon: PenSquare },
   { id: "categories", label: "Categories", icon: Tag },
@@ -36,6 +38,7 @@ const navItems = [
 ];
 
 const panels: Record<string, React.FC> = {
+  profile: ProfileEditor,
   analytics: AnalyticsDashboard,
   blog: BlogEditor,
   categories: CategoriesEditor,
@@ -52,7 +55,7 @@ const panels: Record<string, React.FC> = {
 
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
-  const [active, setActive] = useState("analytics");
+  const [active, setActive] = useState("profile");
   const [collapsed, setCollapsed] = useState(false);
 
   const ActivePanel = panels[active] || AnalyticsDashboard;

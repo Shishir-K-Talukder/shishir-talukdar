@@ -1,10 +1,9 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
-  LogOut, FileText, Image, Search, Lock, Microscope, BookOpen,
-  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft, Tag,
+  LogOut, Image, Search, Lock, Microscope, BookOpen,
+  Building2, PenSquare, Megaphone, BarChart3, PanelLeftClose, PanelLeft, Tag, Shield,
 } from "lucide-react";
-import ContentEditor from "./ContentEditor";
 import SEOEditor from "./SEOEditor";
 import ImageManager from "./ImageManager";
 import ChangePassword from "./ChangePassword";
@@ -15,6 +14,7 @@ import BlogEditor from "./BlogEditor";
 import AdsEditor from "./AdsEditor";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import CategoriesEditor from "./CategoriesEditor";
+import RoleManager from "./RoleManager";
 import { SktLogo } from "@/components/SktLogo";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -26,10 +26,10 @@ const navItems = [
   { id: "research", label: "Research", icon: Microscope },
   { id: "publications", label: "Publications", icon: BookOpen },
   { id: "collaborations", label: "Collaborations", icon: Building2 },
-  { id: "content", label: "Content", icon: FileText },
   { id: "images", label: "Media", icon: Image },
   { id: "ads", label: "Ads", icon: Megaphone },
   { id: "seo", label: "SEO", icon: Search },
+  { id: "roles", label: "Roles", icon: Shield },
   { id: "settings", label: "Security", icon: Lock },
 ];
 
@@ -40,10 +40,10 @@ const panels: Record<string, React.FC> = {
   research: ResearchEditor,
   publications: PublicationsEditor,
   collaborations: CollaborationsEditor,
-  content: ContentEditor,
   images: ImageManager,
   ads: AdsEditor,
   seo: SEOEditor,
+  roles: RoleManager,
   settings: ChangePassword,
 };
 
@@ -56,20 +56,17 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-border/50 bg-card/95 backdrop-blur-xl transition-all duration-300",
           collapsed ? "w-[60px]" : "w-[220px]"
         )}
       >
-        {/* Logo area */}
         <div className={cn("flex items-center gap-2.5 px-4 h-14 border-b border-border/40 shrink-0", collapsed && "justify-center px-0")}>
           <SktLogo className="h-7 w-7 shrink-0" />
           {!collapsed && <span className="font-heading font-bold text-sm tracking-tight">Admin Panel</span>}
         </div>
 
-        {/* Nav items */}
         <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
           {navItems.map((item) => {
             const isActive = active === item.id;
@@ -94,7 +91,6 @@ export default function AdminDashboard() {
           })}
         </nav>
 
-        {/* Bottom section */}
         <div className={cn("border-t border-border/40 p-3 space-y-2 shrink-0", collapsed && "px-1.5")}>
           <button
             onClick={() => setCollapsed(!collapsed)}
@@ -116,9 +112,7 @@ export default function AdminDashboard() {
         </div>
       </aside>
 
-      {/* Main content */}
       <div className={cn("flex-1 transition-all duration-300", collapsed ? "ml-[60px]" : "ml-[220px]")}>
-        {/* Top bar */}
         <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-6 border-b border-border/40 bg-background/80 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
@@ -127,7 +121,6 @@ export default function AdminDashboard() {
           <span className="text-xs text-muted-foreground hidden sm:block">{user?.email}</span>
         </header>
 
-        {/* Panel content */}
         <main className="p-6">
           <ActivePanel />
         </main>

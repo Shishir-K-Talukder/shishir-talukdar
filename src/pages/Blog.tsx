@@ -4,10 +4,11 @@ import { Link, useSearchParams } from "react-router-dom";
 import { BentoCard } from "@/components/BentoCard";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, Clock, ArrowRight, TrendingUp, Newspaper, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Calendar, Clock, ArrowRight, TrendingUp, Sparkles, Flame, Eye } from "lucide-react";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { icons } from "lucide-react";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -68,112 +69,154 @@ export default function Blog() {
 
   const sidebarAd = ads.find(a => a.position === "sidebar");
   const bottomAd = ads.find(a => a.position === "bottom");
-
-  // Find trending post (most recent)
   const trendingPost = posts[0];
+  const secondPost = posts[1];
 
   return (
     <div className="min-w-0">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-border/30 bg-gradient-to-br from-primary/5 via-background to-accent/5">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.08),transparent_60%)]" />
-        <div className="container py-14 md:py-20 relative">
+      {/* Hero Section - Trending Style */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-primary/8 via-background to-background">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,hsl(var(--primary)/0.12),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,hsl(var(--accent)/0.08),transparent_50%)]" />
+
+        <div className="container pt-16 pb-10 md:pt-24 md:pb-14 relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-3xl"
+            className="mb-8"
           >
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-8 w-8 rounded-lg bg-primary/15 flex items-center justify-center">
-                <Newspaper className="h-4 w-4 text-primary" />
-              </div>
-              <span className="text-sm font-medium text-primary">Research Blog</span>
+            <div className="flex items-center gap-2 mb-3">
+              <Flame className="h-4 w-4 text-orange-400" />
+              <span className="text-xs font-bold uppercase tracking-widest text-orange-400">Trending Now</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold font-heading mb-4 leading-tight">
-              Insights from the
-              <span className="text-primary"> Microscopic World</span>
+            <h1 className="text-3xl md:text-5xl font-bold font-heading leading-tight mb-2">
+              Research <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Blog</span>
             </h1>
-            <p className="text-muted-foreground text-base md:text-lg max-w-2xl">
-              Discoveries, methodologies, and reflections from the frontiers of microbiology research. Stay updated with the latest in antimicrobial resistance, biotechnology, and lab innovations.
+            <p className="text-muted-foreground text-sm md:text-base max-w-lg">
+              Latest discoveries and insights from microbiology research.
             </p>
           </motion.div>
 
-          {/* Trending Post Card */}
-          {trendingPost && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="mt-8"
-            >
-              <Link to={`/blog/${trendingPost.slug}`}>
-                <div className="group relative rounded-2xl border border-primary/20 bg-card/60 backdrop-blur-sm p-5 md:p-6 hover:border-primary/40 transition-all max-w-3xl">
-                  <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="h-3.5 w-3.5 text-primary" />
-                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">Latest Post</span>
-                  </div>
-                  <div className="flex flex-col md:flex-row gap-4">
+          {/* Trending cards */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {trendingPost && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+              >
+                <Link to={`/blog/${trendingPost.slug}`} className="group block h-full">
+                  <div className="relative rounded-2xl overflow-hidden border border-primary/20 bg-card/60 backdrop-blur-sm h-full hover:border-primary/40 transition-all">
                     {trendingPost.cover_image_url && (
-                      <img src={trendingPost.cover_image_url} alt={trendingPost.title}
-                        className="w-full md:w-48 h-32 object-cover rounded-xl shrink-0" />
+                      <div className="relative h-48 overflow-hidden">
+                        <img src={trendingPost.cover_image_url} alt={trendingPost.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                        <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-orange-500/90 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                          <TrendingUp className="h-3 w-3" /> Featured
+                        </div>
+                      </div>
                     )}
-                    <div className="flex-1 min-w-0">
+                    <div className="p-5">
                       <h2 className="text-lg md:text-xl font-heading font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">
                         {trendingPost.title}
                       </h2>
-                      <p className="text-sm text-muted-foreground line-clamp-2">{trendingPost.excerpt}</p>
-                      <div className="flex items-center gap-2 mt-3">
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{trendingPost.excerpt}</p>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           {trendingPost.published_at && new Date(trendingPost.published_at).toLocaleDateString()}
                         </span>
-                        <ArrowRight className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity ml-auto" />
+                        <ArrowRight className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            </motion.div>
-          )}
+                </Link>
+              </motion.div>
+            )}
+
+            {secondPost && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+              >
+                <Link to={`/blog/${secondPost.slug}`} className="group block h-full">
+                  <div className="relative rounded-2xl overflow-hidden border border-border/40 bg-card/40 backdrop-blur-sm h-full hover:border-primary/30 transition-all">
+                    {secondPost.cover_image_url && (
+                      <div className="relative h-48 overflow-hidden">
+                        <img src={secondPost.cover_image_url} alt={secondPost.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                      </div>
+                    )}
+                    <div className="p-5">
+                      <h2 className="text-lg font-heading font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                        {secondPost.title}
+                      </h2>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{secondPost.excerpt}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        {secondPost.published_at && new Date(secondPost.published_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* Category Tabs */}
-      <div className="border-b border-border/30 bg-background/80 backdrop-blur-md sticky top-14 z-20">
-        <div className="container">
-          <div className="flex items-center gap-1 overflow-x-auto py-3 scrollbar-none">
+      {/* Categories Grid */}
+      <section className="border-b border-border/30 bg-card/30">
+        <div className="container py-8">
+          <div className="flex items-center gap-2 mb-5">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-muted-foreground">Explore Topics</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             <button
               onClick={() => setSearchParams({})}
               className={cn(
-                "shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all",
+                "rounded-xl border px-4 py-4 text-center transition-all hover:shadow-md",
                 activeCategory === "all"
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  ? "bg-primary/15 border-primary/30 text-primary shadow-sm"
+                  : "bg-card/60 border-border/40 text-muted-foreground hover:text-foreground hover:border-primary/20"
               )}
             >
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5" />
-                All Posts
-              </span>
+              <Eye className="h-5 w-5 mx-auto mb-2" />
+              <span className="text-sm font-medium block">All Posts</span>
+              <span className="text-xs text-muted-foreground">{posts.length}</span>
             </button>
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => setSearchParams({ category: cat.id })}
-                className={cn(
-                  "shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all",
-                  activeCategory === cat.id
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-                )}
-              >
-                {cat.name}
-              </button>
-            ))}
+            {categories.map(cat => {
+              const count = posts.filter(p => (p as any).category_id === cat.id).length;
+              const CatIcon = icons[cat.icon_name as keyof typeof icons] || Sparkles;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSearchParams({ category: cat.id })}
+                  className={cn(
+                    "rounded-xl border px-4 py-4 text-center transition-all hover:shadow-md",
+                    activeCategory === cat.id
+                      ? "shadow-sm"
+                      : "bg-card/60 border-border/40 text-muted-foreground hover:text-foreground hover:border-primary/20"
+                  )}
+                  style={activeCategory === cat.id ? {
+                    backgroundColor: cat.color + "18",
+                    borderColor: cat.color + "40",
+                    color: cat.color,
+                  } : undefined}
+                >
+                  <CatIcon className="h-5 w-5 mx-auto mb-2" style={activeCategory === cat.id ? { color: cat.color } : undefined} />
+                  <span className="text-sm font-medium block">{cat.name}</span>
+                  <span className="text-xs opacity-70">{count}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Content */}
       <div className="container py-10">
@@ -264,38 +307,6 @@ export default function Blog() {
               </BentoCard>
             )}
 
-            {/* Categories Card */}
-            <BentoCard className="p-5">
-              <h3 className="font-heading font-bold text-sm mb-3 flex items-center gap-2">
-                <span className="h-1 w-1 rounded-full bg-primary" />
-                Categories
-              </h3>
-              <div className="space-y-1">
-                {categories.map(cat => {
-                  const count = posts.filter(p => (p as any).category_id === cat.id).length;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSearchParams({ category: cat.id })}
-                      className={cn(
-                        "w-full flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors",
-                        activeCategory === cat.id
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                      )}
-                    >
-                      <span className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: cat.color }} />
-                        {cat.name}
-                      </span>
-                      <span className="text-xs">{count}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </BentoCard>
-
-            {/* Tags */}
             <BentoCard className="p-5">
               <h3 className="font-heading font-bold text-sm mb-3 flex items-center gap-2">
                 <span className="h-1 w-1 rounded-full bg-primary" />

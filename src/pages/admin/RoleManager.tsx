@@ -37,7 +37,7 @@ export default function RoleManager() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["user-roles"] });
-      toast.success("Admin created successfully");
+      toast.success("User created successfully");
       setNewEmail("");
       setNewPassword("");
     },
@@ -56,6 +56,15 @@ export default function RoleManager() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const roleColor = (role: string) => {
+    switch (role) {
+      case "admin": return "default";
+      case "moderator": return "secondary";
+      case "editor": return "outline";
+      default: return "secondary";
+    }
+  };
+
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
 
   return (
@@ -68,7 +77,7 @@ export default function RoleManager() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <UserPlus className="h-4 w-4" /> Create New Admin
+            <UserPlus className="h-4 w-4" /> Create New User
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -90,6 +99,7 @@ export default function RoleManager() {
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="moderator">Moderator</SelectItem>
+                  <SelectItem value="editor">Editor</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -107,7 +117,7 @@ export default function RoleManager() {
         </CardHeader>
         <CardContent>
           {roles.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No roles assigned yet. The first admin should assign themselves a role.</p>
+            <p className="text-sm text-muted-foreground">No roles assigned yet.</p>
           ) : (
             <div className="space-y-2">
               {roles.map((r) => (
@@ -115,7 +125,7 @@ export default function RoleManager() {
                   <div className="flex items-center gap-3">
                     <Shield className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-mono">{r.user_id}</span>
-                    <Badge variant={r.role === "admin" ? "default" : "secondary"} className="text-xs capitalize">
+                    <Badge variant={roleColor(r.role) as any} className="text-xs capitalize">
                       {r.role}
                     </Badge>
                   </div>

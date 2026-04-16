@@ -74,6 +74,7 @@ export default function AdminDashboard() {
             </TabsList>
           </div>
 
+          <TabsContent value="analytics"><AnalyticsDashboard /></TabsContent>
           <TabsContent value="blog"><BlogEditor /></TabsContent>
           <TabsContent value="research"><ResearchEditor /></TabsContent>
           <TabsContent value="publications"><PublicationsEditor /></TabsContent>

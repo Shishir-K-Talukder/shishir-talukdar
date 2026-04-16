@@ -4,10 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { BentoCard } from "@/components/BentoCard";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
+import { useProfile } from "@/hooks/useProfile";
+import profileFallback from "@/assets/profile-placeholder.jpg";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -26,6 +28,8 @@ function AdUnit({ adClient, adSlot }: { adClient: string; adSlot: string }) {
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
+  const profile = useProfile();
+  const authorImg = profile.profileImage || profileFallback;
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["blog-post", slug],
@@ -105,7 +109,7 @@ export default function BlogPost() {
             image: post.cover_image_url || undefined,
             datePublished: post.published_at,
             url: pageUrl,
-            author: { "@type": "Person", name: "Shishir Kumar Talukder" },
+            author: { "@type": "Person", name: profile.name },
           })}
         </script>
       </Helmet>

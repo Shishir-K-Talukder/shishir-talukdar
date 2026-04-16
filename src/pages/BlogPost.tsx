@@ -156,6 +156,12 @@ export default function BlogPost() {
               </div>
             )}
 
+            {postTopAd && (
+              <div className="mb-6 rounded-xl overflow-hidden bg-muted/20 border border-border/30 p-1">
+                <AdUnit adClient={postTopAd.ad_client} adSlot={postTopAd.ad_slot} />
+              </div>
+            )}
+
             <div
               className="prose prose-invert max-w-none prose-headings:font-heading prose-a:text-primary prose-img:rounded-xl prose-table:border-collapse prose-td:border prose-td:border-border prose-td:p-2 prose-th:border prose-th:border-border prose-th:p-2 prose-th:bg-muted/30"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content, { ADD_TAGS: ["iframe"], ADD_ATTR: ["allowfullscreen", "frameborder", "target"] }) }}

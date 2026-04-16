@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Pencil, Trash2, Eye, EyeOff, Calendar as CalendarIcon, Sparkles, Loader2 } from "lucide-react";
 import { ImagePicker } from "@/components/ImagePicker";
 import { RichTextEditor } from "@/components/RichTextEditor";
@@ -34,12 +35,14 @@ type BlogPost = {
   meta_description: string;
   focus_keyword: string;
   canonical_url: string;
+  category_id: string | null;
 };
 
 const emptyPost: Omit<BlogPost, "id"> = {
   title: "", slug: "", content: "", excerpt: "",
   cover_image_url: null, tags: [], published: false, published_at: null,
   seo_title: "", meta_description: "", focus_keyword: "", canonical_url: "",
+  category_id: null,
 };
 
 function slugify(text: string) {

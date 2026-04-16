@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, Clock, ArrowRight, TrendingUp, Sparkles, Flame, Eye, Bug, Leaf, Microscope, FlaskConical, Dna, Droplets, Beaker, Pill, Atom, HeartPulse, Syringe, TestTube } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+
 
 const categoryIconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   Bug, Leaf, Microscope, FlaskConical, Dna, Droplets, Sparkles, Eye, Flame, Beaker, Pill, Atom, HeartPulse, Syringe, TestTube,
@@ -85,11 +85,7 @@ export default function Blog() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,hsl(var(--accent)/0.08),transparent_50%)]" />
 
         <div className="container pt-16 pb-10 md:pt-24 md:pb-14 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
+          <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-2 mb-3">
               <Flame className="h-4 w-4 text-orange-400" />
               <span className="text-xs font-bold uppercase tracking-widest text-orange-400">Trending Now</span>
@@ -100,16 +96,12 @@ export default function Blog() {
             <p className="text-muted-foreground text-sm md:text-base max-w-lg">
               Latest discoveries and insights from microbiology research.
             </p>
-          </motion.div>
+          </div>
 
           {/* Trending cards */}
           <div className="grid gap-4 md:grid-cols-2">
             {trendingPost && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-              >
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: "150ms" }}>
                 <Link to={`/blog/${trendingPost.slug}`} className="group block h-full">
                   <div className="relative rounded-2xl overflow-hidden border border-primary/20 bg-card/60 backdrop-blur-sm h-full hover:border-primary/40 transition-all">
                     {trendingPost.cover_image_url && (
@@ -137,15 +129,11 @@ export default function Blog() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             )}
 
             {secondPost && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25 }}
-              >
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: "250ms" }}>
                 <Link to={`/blog/${secondPost.slug}`} className="group block h-full">
                   <div className="relative rounded-2xl overflow-hidden border border-border/40 bg-card/40 backdrop-blur-sm h-full hover:border-primary/30 transition-all">
                     {secondPost.cover_image_url && (
@@ -167,7 +155,7 @@ export default function Blog() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
@@ -237,11 +225,10 @@ export default function Blog() {
               filteredPosts.map((post, i) => {
                 const postCategory = categories.find(c => c.id === post.category_id);
                 return (
-                  <motion.div
+                  <div
                     key={post.id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className="animate-in fade-in slide-in-from-bottom-3 duration-300"
+                    style={{ animationDelay: `${i * 50}ms` }}
                   >
                     <Link to={`/blog/${post.slug}`}>
                       <BentoCard className="group overflow-hidden hover:border-primary/40 transition-all">
@@ -292,7 +279,7 @@ export default function Blog() {
                         <AdUnit adClient={ads.find(a => a.position === "inline")!.ad_client} adSlot={ads.find(a => a.position === "inline")!.ad_slot} />
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 );
               })
             )}

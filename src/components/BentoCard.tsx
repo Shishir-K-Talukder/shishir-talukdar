@@ -1,5 +1,4 @@
-import { forwardRef } from "react";
-import { motion } from "framer-motion";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface BentoCardProps {
@@ -10,20 +9,43 @@ interface BentoCardProps {
 
 export const BentoCard = forwardRef<HTMLDivElement, BentoCardProps>(
   ({ children, className, delay = 0 }, ref) => {
+    const innerRef = useRef<HTMLDivElement>(null);
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+      const el = innerRef.current;
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.disconnect();
+          }
+        },
+        { rootMargin: "-50px" }
+      );
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, []);
+
     return (
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        whileInView={{ opacity: 1, scale: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.5, delay, type: "spring", stiffness: 100 }}
-        className={cn("bento-cell", className)}
+      <div
+        ref={(node) => {
+          (innerRef as any).current = node;
+          if (typeof ref === "function") ref(node);
+          else if (ref) (ref as any).current = node;
+        }}
+        className={cn(
+          "bento-cell transition-all duration-500 ease-out",
+          visible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-5 scale-[0.95]",
+          className
+        )}
+        style={{ transitionDelay: `${delay}s` }}
       >
         {children}
-      </motion.div>
+      </div>
     );
   }
 );
 
 BentoCard.displayName = "BentoCard";
-

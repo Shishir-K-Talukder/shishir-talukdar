@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Building2, Send, MapPin, Clock, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { motion, AnimatePresence } from "framer-motion";
 import { rateLimit, sanitizeInput } from "@/lib/security";
 
 const schema = z.object({
@@ -85,22 +84,13 @@ export default function Contact() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <BentoCard className="md:col-span-2" delay={0}>
-          <AnimatePresence mode="wait">
-            {sent ? (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="flex flex-col items-center justify-center text-center py-12 px-6"
+          {sent ? (
+              <div
+                className="flex flex-col items-center justify-center text-center py-12 px-6 animate-in fade-in zoom-in-95 duration-300"
               >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", bounce: 0.5, delay: 0.1 }}
-                >
+                <div className="animate-in zoom-in duration-500" style={{ animationDelay: "100ms" }}>
                   <CheckCircle2 className="h-16 w-16 text-primary mb-6" />
-                </motion.div>
+                </div>
                 <h2 className="text-2xl font-heading font-bold mb-3">Message Sent Successfully!</h2>
                 <p className="text-muted-foreground max-w-md mb-2">
                   Thank you for reaching out! Your interest in collaboration means a lot.
@@ -113,15 +103,11 @@ export default function Contact() {
                   <ArrowLeft className="h-4 w-4" />
                   Send Another Message
                 </Button>
-              </motion.div>
+              </div>
             ) : (
-              <motion.form
-                key="form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+              <form
                 onSubmit={handleSubmit}
-                className="space-y-5"
+                className="space-y-5 animate-in fade-in duration-300"
               >
                 <div className="grid gap-5 md:grid-cols-2">
                   <div className="space-y-2">
@@ -156,9 +142,8 @@ export default function Contact() {
                   {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
                   {sending ? "Sending..." : "Send Message"}
                 </Button>
-              </motion.form>
+              </form>
             )}
-          </AnimatePresence>
         </BentoCard>
 
         <div className="flex flex-col gap-4">

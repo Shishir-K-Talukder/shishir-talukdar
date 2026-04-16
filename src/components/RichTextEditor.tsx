@@ -6,6 +6,10 @@ import ImageExt from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import Highlight from "@tiptap/extension-highlight";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,9 +17,15 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
   List, ListOrdered, Quote, Code, Heading1, Heading2, Heading3,
   Image as ImageIcon, Link as LinkIcon, Highlighter, Undo, Redo,
-  Minus, RemoveFormatting,
+  Minus, RemoveFormatting, Table as TableIcon, Plus, Trash2,
 } from "lucide-react";
 import { useEffect, useCallback } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface RichTextEditorProps {
   content: string;
@@ -24,8 +34,8 @@ interface RichTextEditorProps {
 }
 
 function ToolbarButton({
-  onClick, active, children, title,
-}: { onClick: () => void; active?: boolean; children: React.ReactNode; title: string }) {
+  onClick, active, children, title, disabled,
+}: { onClick: () => void; active?: boolean; children: React.ReactNode; title: string; disabled?: boolean }) {
   return (
     <Button
       type="button"
@@ -34,6 +44,7 @@ function ToolbarButton({
       className={cn("h-8 w-8 shrink-0", active && "bg-primary/20 text-primary")}
       onClick={onClick}
       title={title}
+      disabled={disabled}
     >
       {children}
     </Button>
@@ -56,6 +67,10 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       Link.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer nofollow" } }),
       Placeholder.configure({ placeholder: placeholder || "Start writing your blog post..." }),
       Highlight.configure({ multicolor: false }),
+      Table.configure({ resizable: true, HTMLAttributes: { class: "blog-table" } }),
+      TableRow,
+      TableCell,
+      TableHeader,
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -169,6 +184,38 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
         </ToolbarButton>
 
         <ToolbarDivider />
+
+        {/* Table dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button type="button" variant="ghost" size="icon" className={cn("h-8 w-8 shrink-0", editor.isActive("table") && "bg-primary/20 text-primary")} title="Table">
+              <TableIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-[180px]">
+            <DropdownMenuItem onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}>
+              <Plus className="h-4 w-4 mr-2" /> Insert 3×3 Table
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => editor.chain().focus().insertTable({ rows: 4, cols: 4, withHeaderRow: true }).run()}>
+              <Plus className="h-4 w-4 mr-2" /> Insert 4×4 Table
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => editor.chain().focus().addColumnAfter().run()} disabled={!editor.can().addColumnAfter()}>
+              Add Column After
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => editor.chain().focus().addRowAfter().run()} disabled={!editor.can().addRowAfter()}>
+              Add Row After
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => editor.chain().focus().deleteColumn().run()} disabled={!editor.can().deleteColumn()}>
+              Delete Column
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => editor.chain().focus().deleteRow().run()} disabled={!editor.can().deleteRow()}>
+              Delete Row
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => editor.chain().focus().deleteTable().run()} disabled={!editor.can().deleteTable()} className="text-destructive">
+              <Trash2 className="h-4 w-4 mr-2" /> Delete Table
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <ToolbarButton onClick={addLink} active={editor.isActive("link")} title="Link">
           <LinkIcon className="h-4 w-4" />

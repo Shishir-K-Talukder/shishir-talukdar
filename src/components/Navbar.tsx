@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Home, FlaskConical, BookOpen, Users, Rss, User, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { SktLogo } from "@/components/SktLogo";
@@ -8,20 +8,28 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/research", label: "Research" },
-  { to: "/publications", label: "Publications" },
-  { to: "/collaborations", label: "Collaborations" },
-  { to: "/blog", label: "Blog", hasDropdown: true },
-  { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
+  { to: "/", label: "Home", icon: Home },
+  { to: "/research", label: "Research", icon: FlaskConical },
+  { to: "/publications", label: "Publications", icon: BookOpen },
+  { to: "/collaborations", label: "Collabs", icon: Users },
+  { to: "/blog", label: "Blog", icon: Rss, hasDropdown: true },
+  { to: "/about", label: "About", icon: User },
+  { to: "/contact", label: "Contact", icon: Mail },
+];
+
+// Bottom bar shows a subset of links for mobile
+const mobileBottomLinks = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/research", label: "Research", icon: FlaskConical },
+  { to: "/blog", label: "Blog", icon: Rss },
+  { to: "/publications", label: "Pubs", icon: BookOpen },
+  { to: "/about", label: "About", icon: User },
 ];
 
 export function Navbar() {
-  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [blogDropdown, setBlogDropdown] = useState(false);
-  const [mobileBlogOpen, setMobileBlogOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownTimeout = useRef<ReturnType<typeof setTimeout>>();
   const { pathname } = useLocation();
@@ -42,11 +50,6 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
-
-  useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setBlogDropdown(false);
@@ -65,8 +68,14 @@ export function Navbar() {
     dropdownTimeout.current = setTimeout(() => setBlogDropdown(false), 200);
   };
 
+  const isActive = (to: string, hasDropdown?: boolean) => {
+    if (hasDropdown) return pathname.startsWith("/blog");
+    return pathname === to;
+  };
+
   return (
     <>
+      {/* ─── Desktop Top Navbar ─── */}
       <nav
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
@@ -79,7 +88,7 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0">
             <SktLogo className="h-8 w-8 shrink-0 transition-transform group-hover:scale-105" />
-            <div className="hidden sm:flex flex-col leading-none">
+            <div className="flex flex-col leading-none">
               <span className="font-heading text-sm font-bold tracking-tight text-foreground">
                 Shishir K. Talukder
               </span>
@@ -89,7 +98,7 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop nav */}
+          {/* Desktop nav links */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((l) =>
               l.hasDropdown ? (
@@ -104,12 +113,12 @@ export function Navbar() {
                     to={l.to}
                     className={cn(
                       "relative px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1 rounded-md",
-                      pathname.startsWith("/blog")
+                      isActive(l.to, true)
                         ? "text-primary"
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    {pathname.startsWith("/blog") && (
+                    {isActive(l.to, true) && (
                       <motion.span
                         layoutId="nav-active"
                         className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary"
@@ -161,12 +170,12 @@ export function Navbar() {
                   to={l.to}
                   className={cn(
                     "relative px-3 py-2 text-sm font-medium transition-colors rounded-md",
-                    pathname === l.to
+                    isActive(l.to)
                       ? "text-primary"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  {pathname === l.to && (
+                  {isActive(l.to) && (
                     <motion.span
                       layoutId="nav-active"
                       className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary"
@@ -179,7 +188,7 @@ export function Navbar() {
             )}
           </div>
 
-          {/* CTA + Mobile toggle */}
+          {/* CTA */}
           <div className="flex items-center gap-2">
             <Link
               to="/contact"
@@ -187,128 +196,102 @@ export function Navbar() {
             >
               Collaborate
             </Link>
-
-            <motion.button
-              className="lg:hidden text-foreground relative z-50 p-2 rounded-md hover:bg-muted/60 transition-colors"
-              onClick={() => setOpen(!open)}
-              whileTap={{ scale: 0.9 }}
-            >
-              <AnimatePresence mode="wait">
-                {open ? (
-                  <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <X className="h-5 w-5" />
-                  </motion.div>
-                ) : (
-                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <Menu className="h-5 w-5" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile overlay */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-xl lg:hidden"
-          >
-            <div className="flex flex-col items-center justify-center h-full gap-1 px-6">
-              {navLinks.map((l, i) => (
-                <motion.div
-                  key={l.to}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  transition={{ delay: i * 0.05, duration: 0.25 }}
-                  className="w-full max-w-xs"
-                >
-                  {l.hasDropdown ? (
-                    <div>
-                      <button
-                        onClick={() => setMobileBlogOpen(!mobileBlogOpen)}
-                        className={cn(
-                          "w-full flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-lg font-medium transition-colors",
-                          pathname.startsWith("/blog")
-                            ? "text-primary bg-primary/10"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                        )}
-                      >
-                        {l.label}
-                        <ChevronDown className={cn("h-4 w-4 transition-transform", mobileBlogOpen && "rotate-180")} />
-                      </button>
-                      <AnimatePresence>
-                        {mobileBlogOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="flex flex-col items-center gap-1 py-2">
-                              <Link
-                                to="/blog"
-                                onClick={() => setOpen(false)}
-                                className="text-sm text-muted-foreground hover:text-primary px-4 py-1.5 rounded-md transition-colors"
-                              >
-                                All Posts
-                              </Link>
-                              {categories.map((cat) => (
-                                <Link
-                                  key={cat.id}
-                                  to={`/blog?category=${cat.id}`}
-                                  onClick={() => setOpen(false)}
-                                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary px-4 py-1.5 rounded-md transition-colors"
-                                >
-                                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: cat.color }} />
-                                  {cat.name}
-                                </Link>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ) : (
+      {/* ─── Mobile Bottom Navigation Bar ─── */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
+        {/* More menu overlay */}
+        <AnimatePresence>
+          {moreMenuOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-background/60 backdrop-blur-sm z-40"
+                onClick={() => setMoreMenuOpen(false)}
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.2 }}
+                className="absolute bottom-full left-4 right-4 mb-2 z-50 rounded-2xl border border-border/60 bg-card/98 backdrop-blur-xl shadow-2xl p-2"
+              >
+                {navLinks
+                  .filter((l) => !mobileBottomLinks.some((b) => b.to === l.to))
+                  .map((l) => (
                     <Link
+                      key={l.to}
                       to={l.to}
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMoreMenuOpen(false)}
                       className={cn(
-                        "block rounded-lg px-6 py-3 text-center text-lg font-medium transition-colors",
-                        pathname === l.to
+                        "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                        isActive(l.to)
                           ? "text-primary bg-primary/10"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                       )}
                     >
+                      <l.icon className="h-4.5 w-4.5" />
                       {l.label}
                     </Link>
-                  )}
-                </motion.div>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: navLinks.length * 0.05, duration: 0.25 }}
-                className="mt-4"
-              >
-                <Link
-                  to="/contact"
-                  onClick={() => setOpen(false)}
-                  className="inline-flex items-center px-6 py-2.5 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                  Request Collaboration
-                </Link>
+                  ))}
               </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* Bottom bar */}
+        <div className="bg-card/95 backdrop-blur-xl border-t border-border/40 px-2 pb-[env(safe-area-inset-bottom,6px)] pt-1.5">
+          <div className="flex items-center justify-around">
+            {mobileBottomLinks.map((l) => {
+              const active = isActive(l.to, l.to === "/blog");
+              const Icon = l.icon;
+              return (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className="relative flex flex-col items-center py-1 min-w-[56px]"
+                >
+                  {active ? (
+                    <motion.div
+                      layoutId="mobile-nav-active"
+                      className="flex items-center gap-1.5 bg-primary rounded-full px-3.5 py-1.5"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                    >
+                      <Icon className="h-4 w-4 text-primary-foreground" />
+                      <span className="text-xs font-semibold text-primary-foreground">{l.label}</span>
+                    </motion.div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-0.5 py-1">
+                      <Icon className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
+
+            {/* More button */}
+            <button
+              onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+              className="relative flex flex-col items-center py-1 min-w-[56px]"
+            >
+              <div className={cn(
+                "flex flex-col items-center gap-0.5 py-1 transition-colors",
+                moreMenuOpen ? "text-primary" : "text-muted-foreground"
+              )}>
+                {moreMenuOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

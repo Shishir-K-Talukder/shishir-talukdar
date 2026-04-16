@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import { useProfile } from "@/hooks/useProfile";
 import profileFallback from "@/assets/profile-placeholder.jpg";
+import { AdSenseLoader } from "@/components/AdSenseLoader";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }

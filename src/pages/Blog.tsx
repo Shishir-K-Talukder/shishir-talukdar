@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { icons } from "lucide-react";
+import { AdSenseLoader } from "@/components/AdSenseLoader";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -74,6 +75,7 @@ export default function Blog() {
 
   return (
     <div className="min-w-0">
+      <AdSenseLoader />
       {/* Hero Section - Trending Style */}
       <section className="relative overflow-hidden bg-gradient-to-b from-primary/8 via-background to-background">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,hsl(var(--primary)/0.12),transparent_50%)]" />

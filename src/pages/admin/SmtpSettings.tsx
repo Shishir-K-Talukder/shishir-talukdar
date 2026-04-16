@@ -5,11 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { Mail, Server, Save, Loader2, Shield, Eye, EyeOff } from "lucide-react";
+import { Mail, Server, Save, Loader2, Shield, Eye, EyeOff, Zap } from "lucide-react";
+
+const PROVIDER_PRESETS = [
+  { name: "Gmail", host: "smtp.gmail.com", port: 587, encryption: "tls", note: "Use App Password (not your regular password). Enable 2FA first, then generate at myaccount.google.com → Security → App Passwords." },
+  { name: "Mailjet", host: "in-v3.mailjet.com", port: 587, encryption: "tls", note: "Use your API Key as username and Secret Key as password. Find them at app.mailjet.com → API Keys." },
+  { name: "SendGrid", host: "smtp.sendgrid.net", port: 587, encryption: "tls", note: "Username is always 'apikey'. Password is your SendGrid API key." },
+  { name: "Outlook / Office 365", host: "smtp.office365.com", port: 587, encryption: "tls", note: "Use your full email and password. May require admin approval for SMTP." },
+  { name: "Yahoo Mail", host: "smtp.mail.yahoo.com", port: 465, encryption: "ssl", note: "Generate an App Password under Account Security settings." },
+  { name: "Zoho Mail", host: "smtp.zoho.com", port: 587, encryption: "tls", note: "Use your Zoho email and password. Enable 'Less secure apps' or use App Password." },
+];
 
 export default function SmtpSettings() {
   const qc = useQueryClient();
@@ -48,6 +57,16 @@ export default function SmtpSettings() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const applyPreset = (preset: typeof PROVIDER_PRESETS[0]) => {
+    setForm(p => ({
+      ...p,
+      host: preset.host,
+      port: preset.port,
+      encryption_type: preset.encryption,
+    }));
+    toast.info(`${preset.name} settings applied. Fill in your username & password.`);
+  };
+
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
 
   return (
@@ -76,6 +95,44 @@ export default function SmtpSettings() {
               <span className="text-sm text-muted-foreground">• From: {smtp.from_email}</span>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Connect Presets */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Zap className="h-4 w-4 text-accent" /> Quick Connect — Email Providers
+          </CardTitle>
+          <CardDescription>
+            Click a provider to auto-fill server settings. You'll still need to enter your credentials.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {PROVIDER_PRESETS.map((preset) => (
+              <button
+                key={preset.name}
+                onClick={() => applyPreset(preset)}
+                className="group relative rounded-lg border border-border/50 bg-muted/30 hover:bg-primary/10 hover:border-primary/40 transition-all p-3 text-left"
+              >
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                  {preset.name}
+                </span>
+                <span className="block text-[11px] text-muted-foreground mt-0.5">
+                  {preset.host}:{preset.port}
+                </span>
+              </button>
+            ))}
+          </div>
+          {/* Show note for matched preset */}
+          {PROVIDER_PRESETS.find(p => p.host === form.host) && (
+            <div className="mt-3 rounded-md bg-accent/10 border border-accent/20 p-3">
+              <p className="text-xs text-accent-foreground/80">
+                <strong>Tip:</strong> {PROVIDER_PRESETS.find(p => p.host === form.host)?.note}
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

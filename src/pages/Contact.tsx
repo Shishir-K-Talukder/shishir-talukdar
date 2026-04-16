@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Building2, Send, MapPin, Clock, Loader2 } from "lucide-react";
+import { Mail, Building2, Send, MapPin, Clock, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { motion, AnimatePresence } from "framer-motion";
 
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -24,6 +25,7 @@ export default function Contact() {
   const [form, setForm] = useState<FormData>({ name: "", email: "", institution: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,13 +44,17 @@ export default function Contact() {
     try {
       const { error } = await supabase.functions.invoke("send-contact", { body: form });
       if (error) throw error;
-      toast({ title: "Message sent!", description: "Thank you for reaching out. I'll get back to you soon." });
-      setForm({ name: "", email: "", institution: "", subject: "", message: "" });
+      setSent(true);
     } catch (err: any) {
       toast({ title: "Error", description: err.message || "Failed to send message. Please try again.", variant: "destructive" });
     } finally {
       setSending(false);
     }
+  };
+
+  const resetForm = () => {
+    setForm({ name: "", email: "", institution: "", subject: "", message: "" });
+    setSent(false);
   };
 
   const update = (field: keyof FormData, value: string) => {
@@ -65,41 +71,80 @@ export default function Contact() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <BentoCard className="md:col-span-2" delay={0}>
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid gap-5 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" placeholder="Dr. Jane Doe" value={form.name} onChange={(e) => update("name", e.target.value)} />
-                {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="jane@university.edu" value={form.email} onChange={(e) => update("email", e.target.value)} />
-                {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
-              </div>
-            </div>
-            <div className="grid gap-5 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="institution">Institution / Organization</Label>
-                <Input id="institution" placeholder="University of Science" value={form.institution} onChange={(e) => update("institution", e.target.value)} />
-                {errors.institution && <p className="text-xs text-destructive">{errors.institution}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="subject">Subject</Label>
-                <Input id="subject" placeholder="Research collaboration on AMR" value={form.subject} onChange={(e) => update("subject", e.target.value)} />
-                {errors.subject && <p className="text-xs text-destructive">{errors.subject}</p>}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="message">Message</Label>
-              <Textarea id="message" placeholder="Describe your research interests and how you'd like to collaborate..." rows={5} value={form.message} onChange={(e) => update("message", e.target.value)} />
-              {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
-            </div>
-            <Button type="submit" className="w-full md:w-auto" disabled={sending}>
-              {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-              {sending ? "Sending..." : "Send Message"}
-            </Button>
-          </form>
+          <AnimatePresence mode="wait">
+            {sent ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="flex flex-col items-center justify-center text-center py-12 px-6"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", bounce: 0.5, delay: 0.1 }}
+                >
+                  <CheckCircle2 className="h-16 w-16 text-primary mb-6" />
+                </motion.div>
+                <h2 className="text-2xl font-heading font-bold mb-3">Message Sent Successfully!</h2>
+                <p className="text-muted-foreground max-w-md mb-2">
+                  Thank you for reaching out! Your interest in collaboration means a lot.
+                </p>
+                <p className="text-muted-foreground max-w-md mb-8 text-sm">
+                  I'll review your message carefully and get back to you within 48 hours. 
+                  Looking forward to exploring exciting research possibilities together!
+                </p>
+                <Button variant="outline" onClick={resetForm} className="gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Send Another Message
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.form
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onSubmit={handleSubmit}
+                className="space-y-5"
+              >
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input id="name" placeholder="Dr. Jane Doe" value={form.name} onChange={(e) => update("name", e.target.value)} />
+                    {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="jane@university.edu" value={form.email} onChange={(e) => update("email", e.target.value)} />
+                    {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+                  </div>
+                </div>
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="institution">Institution / Organization</Label>
+                    <Input id="institution" placeholder="University of Science" value={form.institution} onChange={(e) => update("institution", e.target.value)} />
+                    {errors.institution && <p className="text-xs text-destructive">{errors.institution}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Subject</Label>
+                    <Input id="subject" placeholder="Research collaboration on AMR" value={form.subject} onChange={(e) => update("subject", e.target.value)} />
+                    {errors.subject && <p className="text-xs text-destructive">{errors.subject}</p>}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea id="message" placeholder="Describe your research interests and how you'd like to collaborate..." rows={5} value={form.message} onChange={(e) => update("message", e.target.value)} />
+                  {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
+                </div>
+                <Button type="submit" className="w-full md:w-auto" disabled={sending}>
+                  {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+                  {sending ? "Sending..." : "Send Message"}
+                </Button>
+              </motion.form>
+            )}
+          </AnimatePresence>
         </BentoCard>
 
         <div className="flex flex-col gap-4">

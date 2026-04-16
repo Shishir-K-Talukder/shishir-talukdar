@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown, Home, FlaskConical, BookOpen, Users, Rss, User, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
 import { SktLogo } from "@/components/SktLogo";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,7 +57,6 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close more menu on route change
   useEffect(() => {
     setMoreMenuOpen(false);
   }, [pathname]);
@@ -120,36 +118,28 @@ export function Navbar() {
                     )}
                   >
                     {isActive(l.to, true) && (
-                      <motion.span layoutId="nav-active" className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary" transition={{ type: "spring", bounce: 0.15, duration: 0.4 }} />
+                      <span className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary" />
                     )}
                     {l.label}
                     <ChevronDown className={cn("h-3 w-3 transition-transform duration-200", blogDropdown && "rotate-180")} />
                   </Link>
-                  <AnimatePresence>
-                    {blogDropdown && categories.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 rounded-xl border border-border/60 bg-popover backdrop-blur-xl shadow-xl overflow-hidden"
-                      >
-                        <div className="p-1.5">
-                          <Link to="/blog" onClick={() => setBlogDropdown(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors">
-                            <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                            All Posts
+                  {blogDropdown && categories.length > 0 && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 rounded-xl border border-border/60 bg-popover backdrop-blur-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="p-1.5">
+                        <Link to="/blog" onClick={() => setBlogDropdown(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors">
+                          <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                          All Posts
+                        </Link>
+                        <div className="h-px bg-border/30 mx-2 my-1" />
+                        {categories.map((cat) => (
+                          <Link key={cat.id} to={`/blog?category=${cat.id}`} onClick={() => setBlogDropdown(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                            <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
+                            <span className="truncate">{cat.name}</span>
                           </Link>
-                          <div className="h-px bg-border/30 mx-2 my-1" />
-                          {categories.map((cat) => (
-                            <Link key={cat.id} to={`/blog?category=${cat.id}`} onClick={() => setBlogDropdown(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
-                              <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
-                              <span className="truncate">{cat.name}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <Link
@@ -161,7 +151,7 @@ export function Navbar() {
                   )}
                 >
                   {isActive(l.to) && (
-                    <motion.span layoutId="nav-active" className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary" transition={{ type: "spring", bounce: 0.15, duration: 0.4 }} />
+                    <span className="absolute inset-x-1 -bottom-[13px] h-0.5 rounded-full bg-primary" />
                   )}
                   {l.label}
                 </Link>
@@ -180,43 +170,32 @@ export function Navbar() {
       {/* ─── Mobile Floating Bottom Pill Nav ─── */}
       <div className="fixed bottom-4 left-4 right-4 z-50 lg:hidden">
         {/* More menu popup */}
-        <AnimatePresence>
-          {moreMenuOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40"
-                onClick={() => setMoreMenuOpen(false)}
-              />
-              <motion.div
-                initial={{ opacity: 0, y: 16, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 16, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
-                className="absolute bottom-full left-0 right-0 mb-3 z-50 rounded-2xl border border-border/40 bg-card/95 backdrop-blur-2xl shadow-[0_8px_40px_-8px_hsl(var(--primary)/0.2)] p-2"
-              >
-                {navLinks
-                  .filter((l) => !mobileBottomLinks.some((b) => b.to === l.to))
-                  .map((l) => (
-                    <Link
-                      key={l.to}
-                      to={l.to}
-                      onClick={() => setMoreMenuOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                        isActive(l.to) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                      )}
-                    >
-                      <l.icon className="h-5 w-5" />
-                      {l.label}
-                    </Link>
-                  ))}
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+        {moreMenuOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 animate-in fade-in duration-200"
+              onClick={() => setMoreMenuOpen(false)}
+            />
+            <div className="absolute bottom-full left-0 right-0 mb-3 z-50 rounded-2xl border border-border/40 bg-card/95 backdrop-blur-2xl shadow-[0_8px_40px_-8px_hsl(var(--primary)/0.2)] p-2 animate-in fade-in slide-in-from-bottom-4 duration-200">
+              {navLinks
+                .filter((l) => !mobileBottomLinks.some((b) => b.to === l.to))
+                .map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={() => setMoreMenuOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                      isActive(l.to) ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                    )}
+                  >
+                    <l.icon className="h-5 w-5" />
+                    {l.label}
+                  </Link>
+                ))}
+            </div>
+          </>
+        )}
 
         {/* Floating pill bar */}
         <div className="rounded-full bg-card/90 backdrop-blur-2xl border border-border/30 shadow-[0_4px_30px_-4px_hsl(var(--background)/0.8),0_0_0_1px_hsl(var(--border)/0.1)] px-2 py-2">
@@ -231,16 +210,12 @@ export function Navbar() {
                   className="relative flex items-center justify-center"
                 >
                   {active ? (
-                    <motion.div
-                      layoutId="mobile-pill-active"
-                      className="flex items-center gap-1.5 bg-primary rounded-full px-3.5 py-2"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.45 }}
-                    >
+                    <div className="flex items-center gap-1.5 bg-primary rounded-full px-3.5 py-2">
                       <Icon className="h-4 w-4 text-primary-foreground" />
                       <span className="text-xs font-semibold text-primary-foreground whitespace-nowrap">
                         {l.label}
                       </span>
-                    </motion.div>
+                    </div>
                   ) : (
                     <div className="p-2 rounded-full">
                       <Icon className="h-5 w-5 text-muted-foreground" />

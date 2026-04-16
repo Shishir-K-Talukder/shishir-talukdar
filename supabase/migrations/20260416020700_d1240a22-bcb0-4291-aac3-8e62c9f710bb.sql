@@ -1,0 +1,5 @@
+ALTER TABLE public.blog_posts
+ADD COLUMN seo_title TEXT NOT NULL DEFAULT '',
+ADD COLUMN meta_description TEXT NOT NULL DEFAULT '',
+ADD COLUMN focus_keyword TEXT NOT NULL DEFAULT '',
+ADD COLUMN canonical_url TEXT NOT NULL DEFAULT '';

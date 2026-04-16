@@ -49,39 +49,51 @@ export type Database = {
       }
       blog_posts: {
         Row: {
+          canonical_url: string
           content: string
           cover_image_url: string | null
           created_at: string
           excerpt: string
+          focus_keyword: string
           id: string
+          meta_description: string
           published: boolean
           published_at: string | null
+          seo_title: string
           slug: string
           tags: string[]
           title: string
           updated_at: string
         }
         Insert: {
+          canonical_url?: string
           content?: string
           cover_image_url?: string | null
           created_at?: string
           excerpt?: string
+          focus_keyword?: string
           id?: string
+          meta_description?: string
           published?: boolean
           published_at?: string | null
+          seo_title?: string
           slug: string
           tags?: string[]
           title: string
           updated_at?: string
         }
         Update: {
+          canonical_url?: string
           content?: string
           cover_image_url?: string | null
           created_at?: string
           excerpt?: string
+          focus_keyword?: string
           id?: string
+          meta_description?: string
           published?: boolean
           published_at?: string | null
+          seo_title?: string
           slug?: string
           tags?: string[]
           title?: string

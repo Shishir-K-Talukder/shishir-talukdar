@@ -105,3 +105,24 @@
 .animate-floating-microbe {
   animation: floating-microbe 14s ease-in-out infinite;
 }
+
+/* TipTap table styles */
+.ProseMirror .blog-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+.ProseMirror .blog-table td,
+.ProseMirror .blog-table th {
+  border: 1px solid hsl(var(--border));
+  padding: 0.5rem 0.75rem;
+  min-width: 80px;
+  vertical-align: top;
+}
+.ProseMirror .blog-table th {
+  background: hsl(var(--muted) / 0.3);
+  font-weight: 600;
+}
+.ProseMirror .blog-table .selectedCell {
+  background: hsl(var(--primary) / 0.15);
+}

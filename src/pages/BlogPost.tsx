@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import { useProfile } from "@/hooks/useProfile";
 import profileFallback from "@/assets/profile-placeholder.jpg";
+import { AdSenseLoader } from "@/components/AdSenseLoader";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -57,6 +58,7 @@ export default function BlogPost() {
 
   const sidebarAd = ads.find(a => a.position === "sidebar");
   const bottomAd = ads.find(a => a.position === "bottom");
+  const postTopAd = ads.find(a => a.position === "post_top");
 
   if (isLoading) {
     return (
@@ -86,6 +88,7 @@ export default function BlogPost() {
 
   return (
     <>
+      <AdSenseLoader />
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={metaDesc} />
@@ -150,6 +153,12 @@ export default function BlogPost() {
             {post.tags?.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-8">
                 {post.tags.map(t => <Badge key={t} variant="secondary">{t}</Badge>)}
+              </div>
+            )}
+
+            {postTopAd && (
+              <div className="mb-6 rounded-xl overflow-hidden bg-muted/20 border border-border/30 p-1">
+                <AdUnit adClient={postTopAd.ad_client} adSlot={postTopAd.ad_slot} />
               </div>
             )}
 

@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, FileText, Image, Search, Lock, Microscope, BookOpen, Building2, PenSquare, Megaphone } from "lucide-react";
+import { LogOut, FileText, Image, Search, Lock, Microscope, BookOpen, Building2, PenSquare, Megaphone, BarChart3 } from "lucide-react";
 import ContentEditor from "./ContentEditor";
 import SEOEditor from "./SEOEditor";
 import ImageManager from "./ImageManager";
@@ -11,12 +11,14 @@ import PublicationsEditor from "./PublicationsEditor";
 import CollaborationsEditor from "./CollaborationsEditor";
 import BlogEditor from "./BlogEditor";
 import AdsEditor from "./AdsEditor";
+import AnalyticsDashboard from "./AnalyticsDashboard";
 import { SktLogo } from "@/components/SktLogo";
 import { FloatingMicrobes } from "@/components/FloatingMicrobes";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
+  { value: "analytics", label: "Analytics", icon: BarChart3 },
   { value: "blog", label: "Blog", icon: PenSquare },
   { value: "research", label: "Research", icon: Microscope },
   { value: "publications", label: "Publications", icon: BookOpen },

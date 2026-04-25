@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { createClient } from "@supabase/supabase-js";
@@ -18,6 +18,13 @@ export default function RoleManager() {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState("admin");
+  const normalizedEmail = useMemo(() => newEmail.trim().toLowerCase(), [newEmail]);
+  const fallbackSql = `-- External database fix for admin creation\n-- Run this in your external database SQL editor\n\ncreate extension if not exists pgcrypto;\n\ndo $$\nbegin\n  if not exists (select 1 from pg_type where typname = 'app_role') then\n    create type public.app_role as enum ('admin', 'moderator', 'user', 'editor');\n  end if;\nend$$;\n\ncreate table if not exists public.user_roles (\n  id uuid primary key default gen_random_uuid(),\n  user_id uuid not null,\n  role public.app_role not null,\n  created_at timestamptz not null default now(),\n  unique (user_id, role)\n);\n\nalter table public.user_roles enable row level security;\n\ncreate or replace function public.has_role(_user_id uuid, _role public.app_role)\nreturns boolean\nlanguage sql\nstable\nsecurity definer\nset search_path = public\nas $$\n  select exists (\n    select 1 from public.user_roles\n    where user_id = _user_id and role = _role\n  )\n$$;\n\ndrop policy if exists \"Authenticated users can read roles\" on public.user_roles;\ndrop policy if exists \"Admins can insert roles\" on public.user_roles;\ndrop policy if exists \"Admins can delete roles\" on public.user_roles;\n\ncreate policy \"Authenticated users can read roles\"\non public.user_roles\nfor select\nto authenticated\nusing (true);\n\ncreate policy \"Admins can insert roles\"\non public.user_roles\nfor insert\nto authenticated\nwith check (public.has_role(auth.uid(), 'admin'::public.app_role));\n\ncreate policy \"Admins can delete roles\"\non public.user_roles\nfor delete\nto authenticated\nusing (public.has_role(auth.uid(), 'admin'::public.app_role));`;
+
+  const validateInput = () => {
+    if (!normalizedEmail || !newPassword) throw new Error("Email and password are required.");
+    if (newPassword.length < 8) throw new Error("Password must be at least 8 characters.");
+  };
 
   const createUserWithClientFallback = async () => {
     const isolatedClient = createClient(
@@ -32,13 +39,15 @@ export default function RoleManager() {
       },
     );
 
-    const normalizedEmail = newEmail.trim().toLowerCase();
     const { data, error } = await isolatedClient.auth.signUp({
       email: normalizedEmail,
       password: newPassword,
     });
 
     if (error) {
+      if (error.message.toLowerCase().includes("already registered")) {
+        throw new Error("User already exists in external auth. Run the external_admin_fix.sql file to grant or reset admin access.");
+      }
       throw new Error(error.message);
     }
 
@@ -68,8 +77,10 @@ export default function RoleManager() {
 
   const createAdmin = useMutation({
     mutationFn: async () => {
+      validateInput();
+
       const res = await supabase.functions.invoke("create-admin", {
-        body: { email: newEmail, password: newPassword, role: newRole },
+        body: { email: normalizedEmail, password: newPassword, role: newRole },
       });
 
       if (!res.error && !res.data?.error) return;
@@ -81,6 +92,8 @@ export default function RoleManager() {
         "failed to send",
         "not found",
         "404",
+        "functionshttperror",
+        "unable to reach",
       ].some((term) => errorMessage.includes(term));
 
       if (shouldUseClientFallback) {
@@ -96,7 +109,15 @@ export default function RoleManager() {
       setNewEmail("");
       setNewPassword("");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => {
+      const message = e.message.toLowerCase();
+      if (message.includes("row-level security") || message.includes("permission") || message.includes("user_roles") || message.includes("external_admin_fix.sql") || message.includes("already exists in external auth")) {
+        navigator.clipboard?.writeText(fallbackSql).catch(() => undefined);
+        toast.error("External DB needs role SQL. The fix SQL has been copied to your clipboard.");
+        return;
+      }
+      toast.error(e.message);
+    },
   });
 
   const removeRole = useMutation({

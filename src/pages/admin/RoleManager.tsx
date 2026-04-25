@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { createClient } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,44 @@ export default function RoleManager() {
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState("admin");
 
+  const createUserWithClientFallback = async () => {
+    const isolatedClient = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+        },
+      },
+    );
+
+    const normalizedEmail = newEmail.trim().toLowerCase();
+    const { data, error } = await isolatedClient.auth.signUp({
+      email: normalizedEmail,
+      password: newPassword,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    const createdUserId = data.user?.id;
+    if (!createdUserId) {
+      throw new Error("User account was created but no user id was returned.");
+    }
+
+    const { error: roleError } = await supabase.from("user_roles").insert({
+      user_id: createdUserId,
+      role: newRole as "admin" | "moderator" | "editor" | "user",
+    });
+
+    if (roleError) {
+      throw new Error(roleError.message);
+    }
+  };
+
   const { data: roles = [], isLoading } = useQuery({
     queryKey: ["user-roles"],
     queryFn: async () => {
@@ -32,8 +71,24 @@ export default function RoleManager() {
       const res = await supabase.functions.invoke("create-admin", {
         body: { email: newEmail, password: newPassword, role: newRole },
       });
-      if (res.error) throw res.error;
-      if (res.data?.error) throw new Error(res.data.error);
+
+      if (!res.error && !res.data?.error) return;
+
+      const errorMessage = `${res.error?.message ?? ""} ${res.data?.error ?? ""}`.toLowerCase();
+      const shouldUseClientFallback = [
+        "edge function",
+        "failed to fetch",
+        "failed to send",
+        "not found",
+        "404",
+      ].some((term) => errorMessage.includes(term));
+
+      if (shouldUseClientFallback) {
+        await createUserWithClientFallback();
+        return;
+      }
+
+      throw new Error(res.data?.error || res.error?.message || "Unable to create user");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["user-roles"] });

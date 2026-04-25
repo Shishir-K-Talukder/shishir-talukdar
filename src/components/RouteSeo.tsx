@@ -167,7 +167,7 @@ export function RouteSeo() {
   const robots = config.noindex ? "noindex, nofollow" : DEFAULT_ROBOTS;
   const schemaList = config.schema
     ? (Array.isArray(config.schema) ? config.schema : [config.schema]).map((entry) =>
-        JSON.parse(JSON.stringify(entry).replaceAll("__SITE_URL__", siteUrl)),
+        JSON.parse(JSON.stringify(entry).split("__SITE_URL__").join(siteUrl)),
       )
     : [];
 

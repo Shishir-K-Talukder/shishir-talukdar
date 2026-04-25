@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { createClient } from "@supabase/supabase-js";
@@ -18,6 +18,12 @@ export default function RoleManager() {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState("admin");
+  const normalizedEmail = useMemo(() => newEmail.trim().toLowerCase(), [newEmail]);
+
+  const validateInput = () => {
+    if (!normalizedEmail || !newPassword) throw new Error("Email and password are required.");
+    if (newPassword.length < 8) throw new Error("Password must be at least 8 characters.");
+  };
 
   const createUserWithClientFallback = async () => {
     const isolatedClient = createClient(
@@ -32,7 +38,6 @@ export default function RoleManager() {
       },
     );
 
-    const normalizedEmail = newEmail.trim().toLowerCase();
     const { data, error } = await isolatedClient.auth.signUp({
       email: normalizedEmail,
       password: newPassword,
@@ -68,8 +73,10 @@ export default function RoleManager() {
 
   const createAdmin = useMutation({
     mutationFn: async () => {
+      validateInput();
+
       const res = await supabase.functions.invoke("create-admin", {
-        body: { email: newEmail, password: newPassword, role: newRole },
+        body: { email: normalizedEmail, password: newPassword, role: newRole },
       });
 
       if (!res.error && !res.data?.error) return;
@@ -81,6 +88,8 @@ export default function RoleManager() {
         "failed to send",
         "not found",
         "404",
+        "functionshttperror",
+        "unable to reach",
       ].some((term) => errorMessage.includes(term));
 
       if (shouldUseClientFallback) {

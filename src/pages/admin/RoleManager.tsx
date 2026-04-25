@@ -45,6 +45,9 @@ export default function RoleManager() {
     });
 
     if (error) {
+      if (error.message.toLowerCase().includes("already registered")) {
+        throw new Error("User already exists in external auth. Run the external_admin_fix.sql file to grant or reset admin access.");
+      }
       throw new Error(error.message);
     }
 
@@ -108,7 +111,7 @@ export default function RoleManager() {
     },
     onError: (e: Error) => {
       const message = e.message.toLowerCase();
-      if (message.includes("row-level security") || message.includes("permission") || message.includes("user_roles")) {
+      if (message.includes("row-level security") || message.includes("permission") || message.includes("user_roles") || message.includes("external_admin_fix.sql") || message.includes("already exists in external auth")) {
         navigator.clipboard?.writeText(fallbackSql).catch(() => undefined);
         toast.error("External DB needs role SQL. The fix SQL has been copied to your clipboard.");
         return;

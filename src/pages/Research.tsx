@@ -41,7 +41,7 @@ export default function Research() {
           {projects.map((p, i) => {
             const Icon = iconMap[p.icon_name] || FlaskConical;
             return (
-              <BentoCard key={p.id} delay={i * 0.08} className="flex flex-col gap-4 overflow-hidden">
+              <BentoCard key={p.id} delay={i * 0.08} className="flex min-h-[24rem] flex-col gap-4 overflow-hidden">
                 {p.image_url && (
                   <img src={p.image_url} alt={p.title} className="w-full h-36 object-cover rounded-xl -mt-1" loading="lazy" />
                 )}

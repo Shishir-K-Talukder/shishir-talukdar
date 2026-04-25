@@ -20,25 +20,9 @@ export default function Index() {
   const profileImg = profile.profileImage || profileFallback;
   return (
     <div className="container py-12 md:py-20">
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: profile.name,
-            jobTitle: profile.title,
-            description: "Pioneering research and innovative solutions in microbial science for a healthier tomorrow.",
-            url: window.location.origin,
-            knowsAbout: ["Antimicrobial Resistance", "Bacterial Pathogenesis", "Microbial Ecology"],
-          }),
-        }}
-      />
-
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Hero — spans 2 cols + 2 rows */}
-        <BentoCard className="md:col-span-2 lg:col-span-2 lg:row-span-2 flex flex-col justify-between gap-6 relative overflow-hidden" delay={0}>
+        <BentoCard className="md:col-span-2 lg:col-span-2 lg:row-span-2 flex min-h-[28rem] flex-col justify-between gap-6 relative overflow-hidden" delay={0}>
           {/* Background lab image */}
           <div className="absolute inset-0 z-0">
             <img src={labHeroImg} alt="" className="h-full w-full object-cover opacity-15" width={800} height={800} />
@@ -57,7 +41,7 @@ export default function Index() {
           </div>
 
           {/* Profile photo */}
-          <div className="relative z-10 flex items-center gap-4">
+          <div className="relative z-10 flex flex-wrap items-center gap-4 sm:flex-nowrap">
             <img
               src={profileImg}
               alt={`${profile.name} — ${profile.title}`}
@@ -152,13 +136,13 @@ export default function Index() {
         </BentoCard>
 
         {/* Quick Links */}
-        <BentoCard className="md:col-span-2 flex gap-4" delay={0.5}>
-          <Link to="/publications" className="flex-1 flex flex-col items-center justify-center gap-2 rounded-2xl border bg-secondary/30 p-5 hover:border-primary/30 transition-colors">
+        <BentoCard className="md:col-span-2 grid gap-4 sm:grid-cols-2" delay={0.5}>
+          <Link to="/publications" className="flex min-h-[9rem] flex-col items-center justify-center gap-2 rounded-2xl border bg-secondary/30 p-5 text-center hover:border-primary/30 transition-colors">
             <BookOpen className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold font-mono">1+</span>
             <span className="text-sm text-muted-foreground">Publications</span>
           </Link>
-          <Link to="/collaborations" className="flex-1 flex flex-col items-center justify-center gap-2 rounded-2xl border bg-secondary/30 p-5 hover:border-primary/30 transition-colors">
+          <Link to="/collaborations" className="flex min-h-[9rem] flex-col items-center justify-center gap-2 rounded-2xl border bg-secondary/30 p-5 text-center hover:border-primary/30 transition-colors">
             <Users className="h-6 w-6 text-accent" />
             <span className="text-2xl font-bold font-mono">8+</span>
             <span className="text-sm text-muted-foreground">Collaborations</span>

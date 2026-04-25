@@ -19,6 +19,7 @@ export default function RoleManager() {
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState("admin");
   const normalizedEmail = useMemo(() => newEmail.trim().toLowerCase(), [newEmail]);
+  const fallbackSql = `-- External database fix for admin creation\n-- Run this in your external database SQL editor\n\ncreate extension if not exists pgcrypto;\n\ndo $$\nbegin\n  if not exists (select 1 from pg_type where typname = 'app_role') then\n    create type public.app_role as enum ('admin', 'moderator', 'user', 'editor');\n  end if;\nend$$;\n\ncreate table if not exists public.user_roles (\n  id uuid primary key default gen_random_uuid(),\n  user_id uuid not null,\n  role public.app_role not null,\n  created_at timestamptz not null default now(),\n  unique (user_id, role)\n);\n\nalter table public.user_roles enable row level security;\n\ncreate or replace function public.has_role(_user_id uuid, _role public.app_role)\nreturns boolean\nlanguage sql\nstable\nsecurity definer\nset search_path = public\nas $$\n  select exists (\n    select 1 from public.user_roles\n    where user_id = _user_id and role = _role\n  )\n$$;\n\ndrop policy if exists \"Authenticated users can read roles\" on public.user_roles;\ndrop policy if exists \"Admins can insert roles\" on public.user_roles;\ndrop policy if exists \"Admins can delete roles\" on public.user_roles;\n\ncreate policy \"Authenticated users can read roles\"\non public.user_roles\nfor select\nto authenticated\nusing (true);\n\ncreate policy \"Admins can insert roles\"\non public.user_roles\nfor insert\nto authenticated\nwith check (public.has_role(auth.uid(), 'admin'::public.app_role));\n\ncreate policy \"Admins can delete roles\"\non public.user_roles\nfor delete\nto authenticated\nusing (public.has_role(auth.uid(), 'admin'::public.app_role));`;
 
   const validateInput = () => {
     if (!normalizedEmail || !newPassword) throw new Error("Email and password are required.");
@@ -105,7 +106,15 @@ export default function RoleManager() {
       setNewEmail("");
       setNewPassword("");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => {
+      const message = e.message.toLowerCase();
+      if (message.includes("row-level security") || message.includes("permission") || message.includes("user_roles")) {
+        navigator.clipboard?.writeText(fallbackSql).catch(() => undefined);
+        toast.error("External DB needs role SQL. The fix SQL has been copied to your clipboard.");
+        return;
+      }
+      toast.error(e.message);
+    },
   });
 
   const removeRole = useMutation({

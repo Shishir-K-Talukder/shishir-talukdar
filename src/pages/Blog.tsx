@@ -13,6 +13,7 @@ const categoryIconMap: Record<string, React.ComponentType<{ className?: string; 
   Bug, Leaf, Microscope, FlaskConical, Dna, Droplets, Sparkles, Eye, Flame, Beaker, Pill, Atom, HeartPulse, Syringe, TestTube,
 };
 import { AdSenseLoader } from "@/components/AdSenseLoader";
+import { useContentValue } from "@/hooks/useSiteContent";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -32,6 +33,7 @@ function AdUnit({ adClient, adSlot, className }: { adClient: string; adSlot: str
 export default function Blog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCategory = searchParams.get("category") || "all";
+  const { value: globalPubId } = useContentValue("ads", "adsense_publisher_id", "");
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["blog-posts"],

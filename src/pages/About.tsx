@@ -5,9 +5,10 @@ import profileFallback from "@/assets/profile-placeholder.jpg";
 import labHeroImg from "@/assets/lab-hero.jpg";
 
 const timeline = [
-  { year: "2022 – Present", title: "Research Microbiologist", desc: "Leading independent research on antimicrobial resistance and microbial ecology." },
-  { year: "2020 – 2022", title: "Graduate Research Assistant", desc: "Advanced studies in bacterial pathogenesis and molecular microbiology." },
-  { year: "2016 – 2020", title: "BSc Microbiology", desc: "Comprehensive training in general and applied microbiology." },
+  { year: "2024 – Present", title: "Research Microbiologist ", desc: "Leading independent research on antimicrobial resistance, microbial ecology, Forensic Science, Agricultural microbiology." },
+  { year: "2021 – 2024", title: "BSc In Microbiology", desc: "International Institute of Applied Science and Technology, Rangpur, Bangladesh." },
+  { year: "2016 – 2020", title: "Diploma In Medical Assistant", desc: "State Medical Faculty, Dhaka, Bangladesh." },
+  { year: "2006 – 2016", title: "Secondary School Certificate", desc: "Siddique Memorial School & College, Rangpur, Bangladesh." },
 ];
 
 const skills = [

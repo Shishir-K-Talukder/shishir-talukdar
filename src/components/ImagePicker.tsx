@@ -24,13 +24,14 @@ export function ImagePicker({ value, onChange, label = "Image" }: ImagePickerPro
   const handleUpload = async () => {
     if (!file || !name) return;
     try {
-      const result = await upload.mutateAsync({ file, name, altText: name, category: "general" });
-      // After upload, pick the newly uploaded image URL
-      // The mutation returns void, so we need to construct the URL or refetch
-      // Let's just close and let user pick from library
-      toast.success("Image uploaded! Select it from the library.");
+      const publicUrl = await upload.mutateAsync({ file, name, altText: name, category: "general" });
+      toast.success("Image uploaded and selected!");
       setFile(null);
       setName("");
+      if (publicUrl) {
+        onChange(publicUrl);
+        setOpen(false);
+      }
     } catch (err: any) {
       toast.error(err.message);
     }

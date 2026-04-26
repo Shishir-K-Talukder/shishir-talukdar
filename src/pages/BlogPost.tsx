@@ -11,6 +11,7 @@ import DOMPurify from "dompurify";
 import { useProfile } from "@/hooks/useProfile";
 import profileFallback from "@/assets/profile-placeholder.jpg";
 import { AdSenseLoader } from "@/components/AdSenseLoader";
+import { useContentValue } from "@/hooks/useSiteContent";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -31,6 +32,7 @@ export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const profile = useProfile();
   const authorImg = profile.profileImage || profileFallback;
+  const { value: globalPubId } = useContentValue("ads", "adsense_publisher_id", "");
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["blog-post", slug],
@@ -158,7 +160,7 @@ export default function BlogPost() {
 
             {postTopAd && (
               <div className="mb-6 rounded-xl overflow-hidden bg-muted/20 border border-border/30 p-1">
-                <AdUnit adClient={postTopAd.ad_client} adSlot={postTopAd.ad_slot} />
+                <AdUnit adClient={postTopAd.ad_client || globalPubId} adSlot={postTopAd.ad_slot} />
               </div>
             )}
 
@@ -169,7 +171,7 @@ export default function BlogPost() {
 
             {bottomAd && (
               <div className="mt-12">
-                <AdUnit adClient={bottomAd.ad_client} adSlot={bottomAd.ad_slot} />
+                <AdUnit adClient={bottomAd.ad_client || globalPubId} adSlot={bottomAd.ad_slot} />
               </div>
             )}
           </article>
@@ -177,7 +179,7 @@ export default function BlogPost() {
           <aside className="hidden lg:block space-y-6">
             {sidebarAd && (
               <BentoCard className="p-4 sticky top-20">
-                <AdUnit adClient={sidebarAd.ad_client} adSlot={sidebarAd.ad_slot} />
+                <AdUnit adClient={sidebarAd.ad_client || globalPubId} adSlot={sidebarAd.ad_slot} />
               </BentoCard>
             )}
           </aside>

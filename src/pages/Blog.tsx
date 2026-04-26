@@ -13,6 +13,7 @@ const categoryIconMap: Record<string, React.ComponentType<{ className?: string; 
   Bug, Leaf, Microscope, FlaskConical, Dna, Droplets, Sparkles, Eye, Flame, Beaker, Pill, Atom, HeartPulse, Syringe, TestTube,
 };
 import { AdSenseLoader } from "@/components/AdSenseLoader";
+import { useContentValue } from "@/hooks/useSiteContent";
 
 declare global {
   interface Window { adsbygoogle: unknown[] }
@@ -32,6 +33,7 @@ function AdUnit({ adClient, adSlot, className }: { adClient: string; adSlot: str
 export default function Blog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCategory = searchParams.get("category") || "all";
+  const { value: globalPubId } = useContentValue("ads", "adsense_publisher_id", "");
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["blog-posts"],
@@ -276,7 +278,7 @@ export default function Blog() {
                     </Link>
                     {i === 0 && ads.find(a => a.position === "inline") && (
                       <div className="my-4">
-                        <AdUnit adClient={ads.find(a => a.position === "inline")!.ad_client} adSlot={ads.find(a => a.position === "inline")!.ad_slot} />
+                        <AdUnit adClient={ads.find(a => a.position === "inline")!.ad_client || globalPubId} adSlot={ads.find(a => a.position === "inline")!.ad_slot} />
                       </div>
                     )}
                   </div>
@@ -286,7 +288,7 @@ export default function Blog() {
 
             {bottomAd && (
               <div className="mt-8">
-                <AdUnit adClient={bottomAd.ad_client} adSlot={bottomAd.ad_slot} />
+                <AdUnit adClient={bottomAd.ad_client || globalPubId} adSlot={bottomAd.ad_slot} />
               </div>
             )}
           </div>
@@ -295,7 +297,7 @@ export default function Blog() {
           <aside className="hidden lg:block space-y-6">
             {sidebarAd && (
               <BentoCard className="p-4">
-                <AdUnit adClient={sidebarAd.ad_client} adSlot={sidebarAd.ad_slot} />
+                <AdUnit adClient={sidebarAd.ad_client || globalPubId} adSlot={sidebarAd.ad_slot} />
               </BentoCard>
             )}
 

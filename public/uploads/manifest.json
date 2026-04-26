@@ -1,0 +1,10 @@
+{
+  "images": [
+    {
+      "name": "Example Image",
+      "file": "example.jpg",
+      "alt": "Example placeholder image",
+      "category": "general"
+    }
+  ]
+}

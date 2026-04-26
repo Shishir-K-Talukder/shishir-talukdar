@@ -112,12 +112,12 @@ export default function Contact() {
                 <div className="grid gap-5 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" placeholder="Dr. Jane Doe" value={form.name} onChange={(e) => update("name", e.target.value)} />
+                    <Input id="name" placeholder="Shishir kumar talukder" value={form.name} onChange={(e) => update("name", e.target.value)} />
                     {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="jane@university.edu" value={form.email} onChange={(e) => update("email", e.target.value)} />
+                    <Input id="email" type="email" placeholder="shishir@unversity.edu" value={form.email} onChange={(e) => update("email", e.target.value)} />
                     {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
                   </div>
                 </div>
@@ -151,7 +151,8 @@ export default function Contact() {
             <Mail className="h-6 w-6 text-primary mb-3" />
             <h3 className="font-bold font-heading mb-1">Email</h3>
             <a href="mailto:shishir.talukder@research.org" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              shishir.talukder@research.org
+              contact@shishirkumartalukder.com
+
             </a>
           </BentoCard>
           <BentoCard delay={0.15}>

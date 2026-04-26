@@ -278,7 +278,7 @@ export default function Blog() {
                     </Link>
                     {i === 0 && ads.find(a => a.position === "inline") && (
                       <div className="my-4">
-                        <AdUnit adClient={ads.find(a => a.position === "inline")!.ad_client} adSlot={ads.find(a => a.position === "inline")!.ad_slot} />
+                        <AdUnit adClient={ads.find(a => a.position === "inline")!.ad_client || globalPubId} adSlot={ads.find(a => a.position === "inline")!.ad_slot} />
                       </div>
                     )}
                   </div>
@@ -288,7 +288,7 @@ export default function Blog() {
 
             {bottomAd && (
               <div className="mt-8">
-                <AdUnit adClient={bottomAd.ad_client} adSlot={bottomAd.ad_slot} />
+                <AdUnit adClient={bottomAd.ad_client || globalPubId} adSlot={bottomAd.ad_slot} />
               </div>
             )}
           </div>
@@ -297,7 +297,7 @@ export default function Blog() {
           <aside className="hidden lg:block space-y-6">
             {sidebarAd && (
               <BentoCard className="p-4">
-                <AdUnit adClient={sidebarAd.ad_client} adSlot={sidebarAd.ad_slot} />
+                <AdUnit adClient={sidebarAd.ad_client || globalPubId} adSlot={sidebarAd.ad_slot} />
               </BentoCard>
             )}
 
